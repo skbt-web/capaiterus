@@ -407,10 +407,10 @@
         }
 
         // Save Data
-        async function saveData(event, type) {
+        function saveData(event, type) {
             event.preventDefault();
             const date = new Date().toLocaleDateString('ms-MY');
-            const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
+            const id = document.getElementById(`edit-id-${type}`).value || Date.now();
             
             let entry = { id: id, tarikh: date };
 
@@ -431,7 +431,7 @@
                 entry.kategori = document.getElementById('kategori-guru').value;
                 entry.pencapaian = document.getElementById('capai-guru').value;
             }
-         
+
             const existingIndex = db[type].findIndex(item => item.id == id);
             if (existingIndex > -1) {
                 db[type][existingIndex] = entry;
@@ -615,7 +615,13 @@ async function hantarKeFirestore(type, dataBaru) {
                 updateEvidenGuru();
             }
         }
-<!-- TAMBAH DI BAWAH SEKALI SEBELUM </body> -->
+
+        window.onload = () => {
+            renderTables();
+            renderAnalisis();
+        };
+    </script>
+    <!-- TAMBAH DI BAWAH SEKALI SEBELUM </body> -->
 
 <script type="module">
 // ================= FIREBASE SETUP =================
@@ -702,6 +708,5 @@ window.addEventListener("load", async () => {
     await loadFirestoreData();
 });
 </script>
-      
 </body>
 </html>
