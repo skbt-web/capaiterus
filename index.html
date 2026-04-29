@@ -777,31 +777,6 @@ window.deleteItem = async function(type, id) {
 await loadFirestore();
 
 </script>
-   
-    <div id="security-alert" class="no-print" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; background-color: #ef4444; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid white;">
-        <i class="fas fa-exclamation-triangle mr-2"></i> AMARAN: Akses kod sumber telah disekat!
-    </div>
-
-    <script>
-        function tunjukAmaran() {
-            const alertBox = document.getElementById('security-alert');
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
-        }
-
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            tunjukAmaran();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "F12" || (e.ctrlKey && e.key === "u") || (e.ctrlKey && e.shiftKey && e.key === "I") || (e.ctrlKey && e.key === "s")) {
-                e.preventDefault();
-                tunjukAmaran();
-            }
-        });
-    </script>
-
       
 </body>
 </html>
