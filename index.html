@@ -615,167 +615,92 @@ async function hantarKeFirestore(type, dataBaru) {
                 updateEvidenGuru();
             }
         }
-<script>
-    window.renderTables = renderTables;
-    window.renderAnalisis = renderAnalisis;
-    window.showTab = showTab;
-</script>
+<!-- TAMBAH DI BAWAH SEKALI SEBELUM </body> -->
 
 <script type="module">
+// ================= FIREBASE SETUP =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-    getFirestore, collection, addDoc, getDocs, 
-    deleteDoc, doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js; // TAMBAH INI
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// 🔥 GANTI CONFIG INI
 const firebaseConfig = {
-    apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
-    authDomain: "ecapaiskbt.firebaseapp.com",
-    projectId: "ecapaiskbt",
-    storageBucket: "ecapaiskbt.firebasestorage.app",
-    messagingSenderId: "328855405603",
-    appId: "1:328855405603:web:32c5e193845b237e065d96"
+  apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
+  authDomain: "ecapaiskbt.firebaseapp.com",
+  projectId: "ecapaiskbt",
+  storageBucket: "ecapaiskbt.firebasestorage.app",
+  messagingSenderId: "328855405603",
+  appId: "1:328855405603:web:32c5e193845b237e065d96"
 };
 
+// INIT
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const dbFirestore = getFirestore(app);
+const auth = getAuth(app);
 
-console.log("🔥 Firebase berjaya disambung");
+// LOGIN (WAJIB untuk rules)
+signInAnonymously(auth);
 
-// ── SIMPAN KE FIRESTORE ──────────────────────────────────────
-async function simpanFirestore(type, data) {
-    const col = type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru';
+// GLOBAL
+window.dbFirestore = dbFirestore;
+window.fb = { collection, addDoc, getDocs, deleteDoc, doc };
+
+// ================= OVERRIDE FUNCTION ASAL =================
+
+// MODIFY saveData (tanpa ubah logic asal)
+const originalSaveData = window.saveData;
+
+window.saveData = async function(event, type) {
+    // RUN FUNCTION ASAL
+    originalSaveData(event, type);
+
+    // AMBIL DATA TERAKHIR
+    const lastData = window.db[type][window.db[type].length - 1];
+
     try {
-        const docRef = await addDoc(collection(db, col), data);
-        console.log("✅ Disimpan ke Firestore. ID:", docRef.id);
-        return docRef.id; // pulangkan Firestore doc ID
-    } catch (e) {
-        console.error("❌ Gagal simpan ke Firestore:", e);
-        alert("⚠️ Gagal simpan ke cloud!\n\nRalat: " + e.message);
-        return null;
+        await window.fb.addDoc(
+            window.fb.collection(
+                window.dbFirestore,
+                type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru'
+            ),
+            lastData
+        );
+        console.log("✅ Data masuk Firestore");
+    } catch (err) {
+        console.error("❌ Error Firestore:", err);
     }
-}
+};
 
-// ── LOAD DARI FIRESTORE ──────────────────────────────────────
-async function loadFirestore() {
-    console.log("📥 Mula load data dari Firestore...");
+// ================= LOAD DATA =================
+async function loadFirestoreData() {
     const jenis = [
         { key: 'sekolah', col: 'rekod_sekolah' },
-        { key: 'guru',    col: 'rekod_guru'     }
+        { key: 'guru', col: 'rekod_guru' }
     ];
 
-    for (const j of jenis) {
-        try {
-            const snap = await getDocs(collection(db, j.col));
-            window.db[j.key] = [];
-            snap.forEach(d => {
-                window.db[j.key].push({ 
-                    ...d.data(), 
-                    _fid: d.id  // simpan Firestore doc ID untuk padam nanti
-                });
-            });
-            localStorage.setItem(`skbt_${j.key}`, JSON.stringify(window.db[j.key]));
-            console.log(`✅ ${j.key}: ${window.db[j.key].length} rekod diload`);
-        } catch (e) {
-            console.error(`❌ Gagal load ${j.key}:`, e);
-        }
+    for (let j of jenis) {
+        const snapshot = await window.fb.getDocs(
+            window.fb.collection(window.dbFirestore, j.col)
+        );
+
+        window.db[j.key] = [];
+
+        snapshot.forEach(doc => {
+            window.db[j.key].push(doc.data());
+        });
+
+        localStorage.setItem(`skbt_${j.key}`, JSON.stringify(window.db[j.key]));
     }
 
     window.renderTables();
     window.renderAnalisis();
 }
 
-// ── PADAM DARI FIRESTORE ─────────────────────────────────────
-async function padamFirestore(type, id) {
-    const col = type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru';
-    const item = window.db[type].find(i => i.id == id);
-    
-    if (!item) {
-        console.warn("⚠️ Item tidak dijumpai untuk dipadam");
-        return;
-    }
-
-    if (item._fid) {
-        try {
-            await deleteDoc(doc(db, col, item._fid));
-            console.log("✅ Dipadam dari Firestore:", item._fid);
-        } catch (e) {
-            console.error("❌ Gagal padam dari Firestore:", e);
-        }
-    } else {
-        console.warn("⚠️ _fid tiada — rekod ini mungkin hanya dalam localStorage");
-    }
-}
-
-// ── OVERRIDE saveData ────────────────────────────────────────
-window.saveData = async function(event, type) {
-    event.preventDefault();
-
-    const date = new Date().toLocaleDateString('ms-MY');
-    const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
-    let entry = { id, tarikh: date };
-
-    if (type === 'sekolah') {
-        entry.peringkat  = document.getElementById('peringkat-sekolah').value;
-        entry.program    = document.getElementById('program-sekolah').value;
-        entry.eviden     = document.getElementById('eviden-sekolah').value || 
-                           'https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing';
-        entry.anjuran    = document.getElementById('anjuran-sekolah').value;
-        entry.kategori   = document.getElementById('kategori-sekolah').value;
-        entry.pencapaian = document.getElementById('capai-sekolah').value;
-    } else {
-        const gSelect    = document.getElementById('guruSelect');
-        entry.guru       = gSelect.options[gSelect.selectedIndex].text;
-        entry.eviden     = gSelect.options[gSelect.selectedIndex].getAttribute('data-drive');
-        entry.peringkat  = document.getElementById('peringkat-guru').value;
-        entry.program    = document.getElementById('program-guru').value;
-        entry.anjuran    = document.getElementById('anjuran-guru').value;
-        entry.kategori   = document.getElementById('kategori-guru').value;
-        entry.pencapaian = document.getElementById('capai-guru').value;
-    }
-
-    console.log("💾 Cuba simpan:", entry);
-
-    // Simpan ke Firestore
-    const fid = await simpanFirestore(type, entry);
-    if (!fid) return; // berhenti jika gagal
-
-    // Simpan _fid supaya boleh padam nanti
-    entry._fid = fid;
-
-    // Update local db
-    const idx = window.db[type].findIndex(i => i.id == id);
-    if (idx > -1) {
-        window.db[type][idx] = entry;
-    } else {
-        window.db[type].push(entry);
-    }
-
-    localStorage.setItem(`skbt_${type}`, JSON.stringify(window.db[type]));
-
-    alert('✅ Rekod berjaya disimpan ke cloud!');
-    event.target.reset();
-    document.getElementById(`edit-id-${type}`).value = "";
-
-    window.showTab(`rekod-${type}`);
-    window.renderTables();
-};
-
-// ── OVERRIDE deleteItem ──────────────────────────────────────
-window.deleteItem = async function(type, id) {
-    if (!confirm('Padam rekod ini dari sistem dan cloud?')) return;
-
-    await padamFirestore(type, id);
-
-    window.db[type] = window.db[type].filter(i => i.id != id);
-    localStorage.setItem(`skbt_${type}`, JSON.stringify(window.db[type]));
-    window.renderTables();
-    window.renderAnalisis();
-};
-
-// ── MULA — LOAD DATA BILA PAGE BUKA ─────────────────────────
-await loadFirestore();
-
+// ================= AUTO LOAD =================
+window.addEventListener("load", async () => {
+    await loadFirestoreData();
+});
 </script>
       
 </body>
