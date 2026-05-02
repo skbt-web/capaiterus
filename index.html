@@ -12,7 +12,7 @@
         .tab-active { border-bottom: 4px solid #FFD700; color: #000; font-weight: bold; }
         
         @media print {
-            .no-print, header, nav, button, .stats-card, #pautanGuruWrapper, .note-box { display: none !important; }
+            .no-print, header, nav, button, .stats-card, #pautanGuruWrapper, .note-box, .year-selector { display: none !important; }
             body { background-color: white !important; padding: 0 !important; margin: 0 !important; }
             .container { max-width: 100% !important; width: 100% !important; padding: 0 !important; margin: 0 !important; }
             main { padding: 0 !important; }
@@ -216,10 +216,20 @@
         <section id="content-rekod-sekolah" class="tab-content hidden">
             <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
-                    <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN SEKOLAH</h2>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
-                        <i class="fas fa-print mr-2"></i> Cetak Laporan
-                    </button>
+                    <h2 class="text-2xl font-bold text-gray-800 uppercase">REKOD PENCAPAIAN SEKOLAH</h2>
+                    <div class="flex space-x-3 items-center">
+                        <select onchange="updatePrintYearManually(this.value)" class="year-selector border p-2 rounded-lg font-semibold bg-gray-50">
+                            <option value="2025">TAHUN 2025</option>
+                            <option value="2026">TAHUN 2026</option>
+                            <option value="2027">TAHUN 2027</option>
+                            <option value="2028">TAHUN 2028</option>
+                            <option value="2029">TAHUN 2029</option>
+                            <option value="2030">TAHUN 2030</option>
+                        </select>
+                        <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
+                            <i class="fas fa-print mr-2"></i> Cetak Laporan
+                        </button>
+                    </div>
                 </div>
                 <div class="print-area">
                     <h1 class="print-title">REKOD PENCAPAIAN SEKOLAH TAHUN <span class="current-year-print"></span></h1>
@@ -246,10 +256,20 @@
         <section id="content-rekod-guru" class="tab-content hidden">
             <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
-                    <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN GURU</h2>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
-                        <i class="fas fa-print mr-2"></i> Cetak Laporan
-                    </button>
+                    <h2 class="text-2xl font-bold text-gray-800 uppercase">REKOD PENCAPAIAN GURU</h2>
+                    <div class="flex space-x-3 items-center">
+                        <select onchange="updatePrintYearManually(this.value)" class="year-selector border p-2 rounded-lg font-semibold bg-gray-50">
+                            <option value="2025">TAHUN 2025</option>
+                            <option value="2026">TAHUN 2026</option>
+                            <option value="2027">TAHUN 2027</option>
+                            <option value="2028">TAHUN 2028</option>
+                            <option value="2029">TAHUN 2029</option>
+                            <option value="2030">TAHUN 2030</option>
+                        </select>
+                        <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
+                            <i class="fas fa-print mr-2"></i> Cetak Laporan
+                        </button>
+                    </div>
                 </div>
                 <div class="print-area">
                     <h1 class="print-title">REKOD PENCAPAIAN GURU TAHUN <span class="current-year-print"></span></h1>
@@ -300,9 +320,19 @@
                         <h2 class="text-xl font-bold text-gray-800 flex items-center uppercase no-print">
                             <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
                         </h2>
-                        <button onclick="window.print()" class="no-print bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center hover:bg-blue-700 transition shadow">
-                            <i class="fas fa-print mr-2"></i> Cetak Laporan Analisis
-                        </button>
+                        <div class="flex space-x-3 items-center no-print">
+                            <select onchange="updatePrintYearManually(this.value)" class="year-selector border p-2 rounded-lg font-semibold bg-gray-50">
+                                <option value="2025">TAHUN 2025</option>
+                                <option value="2026">TAHUN 2026</option>
+                                <option value="2027">TAHUN 2027</option>
+                                <option value="2028">TAHUN 2028</option>
+                                <option value="2029">TAHUN 2029</option>
+                                <option value="2030">TAHUN 2030</option>
+                            </select>
+                            <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center hover:bg-blue-700 transition shadow">
+                                <i class="fas fa-print mr-2"></i> Cetak Laporan Analisis
+                            </button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto printable-table">
                         <h1 class="print-title">REKOD ANALISIS PENCAPAIAN GURU TAHUN <span class="current-year-print"></span></h1>
@@ -516,7 +546,7 @@
                 tbody.innerHTML += row;
             });
         }
-        updatePrintYear();
+        resetSelectors();
     }
 
     async function renderAnalisis() {
@@ -552,16 +582,27 @@
                         </td>
                     </tr>`;
             });
-            updatePrintYear();
+            resetSelectors();
         } catch (e) {
             tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-500">Gagal memuatkan analisis.</td></tr>';
         }
     }
 
-    function updatePrintYear() {
-        const year = new Date().getFullYear();
+    function resetSelectors() {
+        const currentYear = new Date().getFullYear();
+        document.querySelectorAll('.year-selector').forEach(sel => {
+            sel.value = currentYear;
+        });
+        updatePrintYearManually(currentYear);
+    }
+
+    window.updatePrintYearManually = function(year) {
         document.querySelectorAll('.current-year-print').forEach(el => {
             el.innerText = year;
+        });
+        // Sync all selectors to same year
+        document.querySelectorAll('.year-selector').forEach(sel => {
+            sel.value = year;
         });
     }
 
@@ -586,8 +627,7 @@
     document.getElementById('formGuru').addEventListener('submit', (e) => saveData(e, 'guru'));
 
     window.onload = () => { 
-        renderAnalisis(); 
-        updatePrintYear();
+        renderAnalisis();
     };
 </script>
 </body>
