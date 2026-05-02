@@ -572,5 +572,143 @@
             renderAnalisis();
         };
     </script>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 1. Konfigurasi Firebase Anda
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
+        authDomain: "ecapaiskbt.firebaseapp.com",
+        projectId: "ecapaiskbt",
+        storageBucket: "ecapaiskbt.firebasestorage.app",
+        messagingSenderId: "328855405603",
+        appId: "1:328855405603:web:32c5e193845b237e065d96",
+        measurementId: "G-S0YNK1PNR4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 2. Fungsi Simpan Rekod
+    async function saveData(event, type) {
+        event.preventDefault();
+        const btn = event.submitter;
+        const originalText = btn.innerText;
+        
+        btn.innerText = "SEDANG MENYIMPAN...";
+        btn.disabled = true;
+
+        try {
+            const entry = {
+                tarikh: new Date().toLocaleDateString('ms-MY'),
+                created_at: serverTimestamp(),
+                peringkat: document.getElementById(`peringkat-${type}`).value,
+                program: document.getElementById(`program-${type}`).value,
+                anjuran: document.getElementById(`anjuran-${type}`).value,
+                kategori: document.getElementById(`kategori-${type}`).value,
+                pencapaian: document.getElementById(`capai-${type}`).value
+            };
+
+            if (type === 'sekolah') {
+                entry.eviden = document.getElementById('eviden-sekolah').value || "";
+            } else {
+                const gSelect = document.getElementById('guruSelect');
+                entry.guru = gSelect.options[gSelect.selectedIndex].text;
+            }
+
+            const colName = type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru';
+            await addDoc(collection(db, colName), entry);
+
+            alert(`✅ Rekod ${type.toUpperCase()} Berjaya Disimpan!`);
+            document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
+            
+            // Jika sedang berada di tab rekod, refresh table
+            renderTables();
+        } catch (e) {
+            console.error("Error: ", e);
+            alert("❌ Gagal menyimpan. Sila semak konsol (F12).");
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // 3. Fungsi Papar Jadual
+    async function renderTables() {
+        const tables = [
+            { id: 'table-sekolah-body', col: 'rekod_sekolah', fields: ['tarikh', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] },
+            { id: 'table-guru-body', col: 'rekod_guru', fields: ['tarikh', 'guru', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] }
+        ];
+
+        for (const t of tables) {
+            const tbody = document.getElementById(t.id);
+            if (!tbody) continue;
+
+            tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-gray-500">Memuatkan data...</td></tr>';
+            
+            try {
+                const q = query(collection(db, t.col), orderBy("created_at", "desc"));
+                const querySnapshot = await getDocs(q);
+                tbody.innerHTML = "";
+                let bil = 1;
+
+                querySnapshot.forEach((doc) => {
+                    const d = doc.data();
+                    let row = `<tr class="hover:bg-gray-50">
+                        <td class="p-4 border text-center">${bil++}</td>`;
+                    
+                    t.fields.forEach(f => {
+                        row += `<td class="p-4 border">${d[f] || '-'}</td>`;
+                    });
+
+                    row += `<td class="p-4 border no-print text-center">
+                        <button onclick="alert('ID Rekod: ${doc.id}')" class="text-blue-500 hover:text-blue-700">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </td></tr>`;
+                    tbody.innerHTML += row;
+                });
+
+                if (bil === 1) {
+                    tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-gray-400">Tiada rekod dijumpai.</td></tr>';
+                }
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-red-500">Gagal memuatkan data.</td></tr>';
+            }
+        }
+    }
+
+    // 4. Daftarkan Fungsi Global (Penting untuk Module)
+    window.saveData = saveData;
+    window.showTab = (tabId) => {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
+        document.getElementById('content-' + tabId).classList.remove('hidden');
+        document.getElementById('tab-' + tabId).classList.add('tab-active');
+        if (tabId.includes('rekod') || tabId === 'analisis') renderTables();
+    };
+
+    window.updateEvidenGuru = () => {
+        const select = document.getElementById('guruSelect');
+        const wrapper = document.getElementById('pautanGuruWrapper');
+        const link = document.getElementById('pautanGuruLink');
+        if (select.value) {
+            link.href = select.options[select.selectedIndex].getAttribute('data-drive');
+            wrapper.classList.remove('hidden');
+        } else {
+            wrapper.classList.add('hidden');
+        }
+    };
+
+    window.copyShareLink = () => {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Pautan Dashboard Berjaya Disalin!');
+    };
+
+    // Muat data awal
+    renderTables();
+</script>
 </body>
 </html>
