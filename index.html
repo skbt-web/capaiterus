@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #ffffff; }
+        body { background-color: #ffffff; font-family: 'Inter', sans-serif; }
         .bg-custom-yellow { background-color: #FFD700; }
         .tab-active { border-bottom: 4px solid #FFD700; color: #000; font-weight: bold; }
         @media print {
@@ -18,6 +18,7 @@
         }
         .stats-card { transition: transform 0.2s; }
         .stats-card:hover { transform: translateY(-5px); }
+        .logo-img { width: 60px; height: 60px; object-fit: contain; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -26,16 +27,17 @@
     <header class="bg-custom-yellow p-6 shadow-md no-print">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-4">
-                <div class="bg-white p-2 rounded-full shadow">
-                    <i class="fas fa-graduation-cap text-3xl text-yellow-600"></i>
+                <div class="bg-white p-1 rounded-full shadow-lg flex items-center justify-center overflow-hidden w-16 h-16">
+                    <!-- Memasukkan Logo dari GitHub (Raw URL) -->
+                    <img src="https://raw.githubusercontent.com/skbt-it/e-capai/main/logo.png" alt="Logo SKBT" class="logo-img" onerror="this.onerror=null; this.innerHTML='<i class=\'fas fa-graduation-cap text-3xl text-yellow-600\'></i>'; this.src='https://via.placeholder.com/60?text=SKBT'">
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">e-CAPAI SKBT</h1>
-                    <p class="text-sm text-gray-700">Sistem Rekod Pencapaian Sekolah & Guru</p>
+                    <h1 class="text-2xl font-bold text-gray-800 tracking-tight">e-CAPAI SKBT</h1>
+                    <p class="text-sm text-gray-700 font-medium italic">Sistem Rekod Pencapaian Sekolah & Guru</p>
                 </div>
             </div>
             <div class="mt-4 md:mt-0 flex space-x-2">
-                <button onclick="copyShareLink()" class="bg-white text-gray-800 px-4 py-2 rounded-lg shadow hover:bg-gray-100 flex items-center font-semibold text-sm">
+                <button onclick="copyShareLink()" class="bg-white text-gray-800 px-4 py-2 rounded-lg shadow hover:bg-gray-100 flex items-center font-semibold text-sm transition-all active:scale-95">
                     <i class="fas fa-share-alt mr-2"></i> KONGSI PAUTAN SEMAKAN
                 </button>
             </div>
@@ -45,19 +47,19 @@
     <!-- Navigation -->
     <nav class="bg-white shadow-sm sticky top-0 z-10 no-print">
         <div class="container mx-auto flex overflow-x-auto border-b">
-            <button onclick="showTab('sekolah')" id="tab-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50">
+            <button onclick="showTab('sekolah')" id="tab-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
                 <i class="fas fa-school mr-2"></i> SEKOLAH
             </button>
-            <button onclick="showTab('individu')" id="tab-individu" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50">
+            <button onclick="showTab('individu')" id="tab-individu" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
                 <i class="fas fa-user mr-2"></i> INDIVIDU
             </button>
-            <button onclick="showTab('rekod-sekolah')" id="tab-rekod-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50">
+            <button onclick="showTab('rekod-sekolah')" id="tab-rekod-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
                 <i class="fas fa-list-ul mr-2"></i> REKOD SEKOLAH
             </button>
-            <button onclick="showTab('rekod-guru')" id="tab-rekod-guru" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50">
+            <button onclick="showTab('rekod-guru')" id="tab-rekod-guru" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
                 <i class="fas fa-users-viewfinder mr-2"></i> REKOD GURU
             </button>
-            <button onclick="showTab('analisis')" id="tab-analisis" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 text-blue-600 tab-active">
+            <button onclick="showTab('analisis')" id="tab-analisis" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 text-blue-600 tab-active flex items-center">
                 <i class="fas fa-chart-pie mr-2"></i> ANALISIS PENCAPAIAN
             </button>
         </div>
@@ -77,21 +79,21 @@
                     <div class="grid grid-cols-1 gap-6">
                         <div>
                             <label class="block font-semibold mb-2">Peringkat (Sila Pilih)</label>
-                            <select id="peringkat-sekolah" required class="w-full p-3 border rounded-lg">
+                            <select id="peringkat-sekolah" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
                                 <option value="">-- Pilih --</option>
                                 <option>DAERAH</option><option>NEGERI</option><option>KEBANGSAAN</option><option>ANTARABANGSA</option>
                             </select>
                         </div>
                         <div>
                             <label class="block font-semibold mb-2">Program/Aktiviti/Pertandingan</label>
-                            <input type="text" id="program-sekolah" required class="w-full p-3 border rounded-lg">
+                            <input type="text" id="program-sekolah" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
                         </div>
                         <div>
                             <label class="block font-semibold mb-2">Pautan Eviden Sekolah</label>
-                            <a href="https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing" target="_blank" class="text-blue-600 block bg-blue-50 p-3 rounded-lg border border-blue-100 mb-2">
+                            <a href="https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing" target="_blank" class="text-blue-600 block bg-blue-50 p-3 rounded-lg border border-blue-100 mb-2 hover:bg-blue-100 transition">
                                 <i class="fab fa-google-drive mr-2"></i> Folder Google Drive Sekolah
                             </a>
-                            <input type="url" id="eviden-sekolah" placeholder="Letak pautan spesifik jika ada" class="w-full p-3 border rounded-lg">
+                            <input type="url" id="eviden-sekolah" placeholder="Letak pautan spesifik jika ada" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
                         </div>
                         <div>
                             <label class="block font-semibold mb-2">Anjuran</label>
@@ -111,7 +113,7 @@
                                 <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
                             </select>
                         </div>
-                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 font-bold py-3 rounded-lg shadow transition">SIMPAN REKOD SEKOLAH</button>
+                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD SEKOLAH</button>
                     </div>
                 </form>
             </div>
@@ -173,7 +175,7 @@
                         </div>
                         <div id="pautanGuruWrapper" class="hidden">
                             <label class="block font-semibold mb-2 text-sm text-gray-600"> Pautan Folder Guru Automatik</label>
-                            <a id="pautanGuruLink" href="#" target="_blank" class="text-blue-600 flex items-center bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4">
+                            <a id="pautanGuruLink" href="#" target="_blank" class="text-blue-600 flex items-center bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4 hover:bg-blue-100 transition">
                                 <i class="fab fa-google-drive mr-2"></i> Buka Google Drive Guru
                             </a>
                         </div>
@@ -195,7 +197,7 @@
                                 <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
                             </select>
                         </div>
-                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 font-bold py-3 rounded-lg shadow transition">SIMPAN REKOD INDIVIDU</button>
+                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD INDIVIDU</button>
                     </div>
                 </form>
             </div>
@@ -204,27 +206,27 @@
         <!-- REKOD SEKOLAH -->
         <section id="content-rekod-sekolah" class="tab-content hidden">
             <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                <div class="flex justify-between items-center mb-6 no-print">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
                     <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN SEKOLAH</h2>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-4 py-2 rounded flex items-center">
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
                         <i class="fas fa-print mr-2"></i> Cetak Laporan
                     </button>
                 </div>
                 <div class="print-area">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse border border-gray-200">
                         <thead>
-                            <tr class="bg-yellow-100 text-gray-700">
-                                <th class="p-3 border">BIL</th>
-                                <th class="p-3 border">TARIKH</th>
-                                <th class="p-3 border">PERINGKAT</th>
-                                <th class="p-3 border">PROGRAM/AKTIVITI</th>
-                                <th class="p-3 border">ANJURAN</th>
-                                <th class="p-3 border">KATEGORI</th>
-                                <th class="p-3 border">PENCAPAIAN</th>
-                                <th class="p-3 border no-print text-center">TINDAKAN</th>
+                            <tr class="bg-yellow-100 text-gray-800 font-bold">
+                                <th class="p-4 border">BIL</th>
+                                <th class="p-4 border">TARIKH</th>
+                                <th class="p-4 border">PERINGKAT</th>
+                                <th class="p-4 border">PROGRAM/AKTIVITI</th>
+                                <th class="p-4 border">ANJURAN</th>
+                                <th class="p-4 border">KATEGORI</th>
+                                <th class="p-4 border">PENCAPAIAN</th>
+                                <th class="p-4 border no-print text-center">TINDAKAN</th>
                             </tr>
                         </thead>
-                        <tbody id="table-sekolah-body"></tbody>
+                        <tbody id="table-sekolah-body" class="divide-y"></tbody>
                     </table>
                 </div>
             </div>
@@ -233,28 +235,28 @@
         <!-- REKOD GURU -->
         <section id="content-rekod-guru" class="tab-content hidden">
             <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                <div class="flex justify-between items-center mb-6 no-print">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
                     <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN GURU</h2>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-4 py-2 rounded flex items-center">
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
                         <i class="fas fa-print mr-2"></i> Cetak Laporan
                     </button>
                 </div>
                 <div class="print-area">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse border border-gray-200">
                         <thead>
-                            <tr class="bg-yellow-100 text-gray-700">
-                                <th class="p-3 border">BIL</th>
-                                <th class="p-3 border">TARIKH</th>
-                                <th class="p-3 border">GURU</th>
-                                <th class="p-3 border">PERINGKAT</th>
-                                <th class="p-3 border">PROGRAM/AKTIVITI</th>
-                                <th class="p-3 border">ANJURAN</th>
-                                <th class="p-3 border">KATEGORI</th>
-                                <th class="p-3 border">PENCAPAIAN</th>
-                                <th class="p-3 border no-print text-center">TINDAKAN</th>
+                            <tr class="bg-yellow-100 text-gray-800 font-bold">
+                                <th class="p-4 border">BIL</th>
+                                <th class="p-4 border">TARIKH</th>
+                                <th class="p-4 border">GURU</th>
+                                <th class="p-4 border">PERINGKAT</th>
+                                <th class="p-4 border">PROGRAM/AKTIVITI</th>
+                                <th class="p-4 border">ANJURAN</th>
+                                <th class="p-4 border">KATEGORI</th>
+                                <th class="p-4 border">PENCAPAIAN</th>
+                                <th class="p-4 border no-print text-center">TINDAKAN</th>
                             </tr>
                         </thead>
-                        <tbody id="table-guru-body"></tbody>
+                        <tbody id="table-guru-body" class="divide-y"></tbody>
                     </table>
                 </div>
             </div>
@@ -266,47 +268,49 @@
                 <!-- Statistik Ringkas -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 no-print">
                     <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 stats-card">
-                        <p class="text-sm text-gray-500 uppercase font-bold">Peringkat Antarabangsa</p>
-                        <h3 id="stat-antarabangsa" class="text-3xl font-bold text-blue-600">0</h3>
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Antarabangsa</p>
+                        <h3 id="stat-antarabangsa" class="text-4xl font-black text-blue-600">0</h3>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500 stats-card">
-                        <p class="text-sm text-gray-500 uppercase font-bold">Peringkat Kebangsaan</p>
-                        <h3 id="stat-kebangsaan" class="text-3xl font-bold text-green-600">0</h3>
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Kebangsaan</p>
+                        <h3 id="stat-kebangsaan" class="text-4xl font-black text-green-600">0</h3>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500 stats-card">
-                        <p class="text-sm text-gray-500 uppercase font-bold">Peringkat Negeri</p>
-                        <h3 id="stat-negeri" class="text-3xl font-bold text-yellow-600">0</h3>
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Negeri</p>
+                        <h3 id="stat-negeri" class="text-4xl font-black text-yellow-600">0</h3>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-gray-500 stats-card">
-                        <p class="text-sm text-gray-500 uppercase font-bold">Peringkat Daerah</p>
-                        <h3 id="stat-daerah" class="text-3xl font-bold text-gray-600">0</h3>
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Daerah</p>
+                        <h3 id="stat-daerah" class="text-4xl font-black text-gray-600">0</h3>
                     </div>
                 </div>
 
                 <!-- Jadual Analisis Mengikut Guru -->
                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center uppercase">
                         <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
                     </h2>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse border border-gray-100">
                             <thead>
-                                <tr class="bg-gray-100 text-gray-700">
-                                    <th class="p-3 border">NAMA GURU</th>
-                                    <th class="p-3 border text-center">BIL. PENCAPAIAN</th>
-                                    <th class="p-3 border">SENARAI PROGRAM & TAHAP</th>
-                                    <th class="p-3 border text-center">EVIDEN (DRIVE)</th>
+                                <tr class="bg-gray-50 text-gray-700 font-bold">
+                                    <th class="p-4 border">NAMA GURU</th>
+                                    <th class="p-4 border text-center">BIL. PENCAPAIAN</th>
+                                    <th class="p-4 border">SENARAI PROGRAM & TAHAP</th>
+                                    <th class="p-4 border text-center">EVIDEN (DRIVE)</th>
                                 </tr>
                             </thead>
-                            <tbody id="analisis-guru-body"></tbody>
+                            <tbody id="analisis-guru-body" class="divide-y"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- Footer Analisis -->
                 <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 no-print">
-                    <h4 class="font-bold text-blue-800 mb-2">Nota Semakan Analisis</h4>
-                    <p class="text-sm text-blue-700">Bahagian ini disediakan untuk tujuan pemantauan berkala. Semua pautan Google Drive di sini diselaraskan terus mengikut nama guru yang berdaftar dalam pangkalan data e-CAPAI SKBT.</p>
+                    <h4 class="font-bold text-blue-800 mb-2 flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i> Nota Semakan Analisis
+                    </h4>
+                    <p class="text-sm text-blue-700 leading-relaxed">Bahagian ini disediakan untuk tujuan pemantauan berkala. Semua pautan Google Drive di sini diselaraskan terus mengikut nama guru yang berdaftar dalam pangkalan data e-CAPAI SKBT.</p>
                 </div>
             </div>
         </section>
@@ -316,11 +320,13 @@
     <!-- Modal Preview -->
     <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl">&times;</button>
-            <h3 class="text-xl font-bold border-b pb-2 mb-4">Pratonton Rekod</h3>
-            <div id="modalContent" class="space-y-3"></div>
-            <div class="mt-6 flex justify-end">
-                <button onclick="closeModal()" class="bg-gray-200 px-6 py-2 rounded-lg font-bold">Tutup</button>
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl transition">&times;</button>
+            <h3 class="text-xl font-bold border-b pb-2 mb-4 flex items-center">
+                <i class="fas fa-eye mr-2 text-yellow-500"></i> Pratonton Rekod
+            </h3>
+            <div id="modalContent" class="space-y-4 text-gray-700"></div>
+            <div class="mt-8 flex justify-end">
+                <button onclick="closeModal()" class="bg-gray-200 hover:bg-gray-300 px-8 py-2 rounded-lg font-bold transition">Tutup</button>
             </div>
         </div>
     </div>
@@ -364,7 +370,6 @@
             guru: JSON.parse(localStorage.getItem('skbt_guru') || '[]')
         };
 
-        // 🔥 TAMBAH LINE INI DI SINI
         window.db = db;
         
         // Tab Logic
@@ -387,7 +392,7 @@
             dummy.select();
             document.execCommand('copy');
             document.body.removeChild(dummy);
-            alert('Pautan Dashboard Berjaya Disalin! Sesuai untuk tujuan semakan pihak luar.');
+            alert('Pautan Dashboard Berjaya Disalin!');
         }
 
         // Update Guru Link in Form
@@ -407,7 +412,7 @@
         }
 
         // Save Data
-        async function saveData(event, type) {
+        function saveData(event, type) {
             event.preventDefault();
             const date = new Date().toLocaleDateString('ms-MY');
             const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
@@ -445,294 +450,126 @@
             document.getElementById(`edit-id-${type}`).value = "";
             showTab(`rekod-${type}`);
         }
-        // 3. 🔥 Fungsi Baru untuk Firestore
-async function hantarKeFirestore(type, dataBaru) {
-    try {
-        const collectionName = (type === 'sekolah') ? 'rekod_sekolah' : 'rekod_guru';
-        
-        await window.fb.addDoc(
-            window.fb.collection(window.dbFirestore, collectionName),
-            dataBaru
-        );
-        console.log("✅ Rekod Berjaya Disimpan");
-    } catch (err) {
-        console.error("❌ Gagal simpan ke Firestore:", err);
-        alert("Amaran: Data disimpan di komputer ini sahaja (Offline). Ralat Cloud: " + err.message);
-    }
-}
 
-        // Render Tables
         function renderTables() {
-            const renderRow = (item, index, type) => `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-3 border">${index + 1}</td>
-                    <td class="p-3 border">${item.tarikh}</td>
-                    ${type === 'guru' ? `<td class="p-3 border font-bold">${item.guru}</td>` : ''}
-                    <td class="p-3 border">${item.peringkat}</td>
-                    <td class="p-3 border font-semibold">${item.program}</td>
-                    <td class="p-3 border">${item.anjuran}</td>
-                    <td class="p-3 border text-xs">${item.kategori}</td>
-                    <td class="p-3 border font-bold text-green-700">${item.pencapaian}</td>
-                    <td class="p-3 border no-print text-center">
-                        <div class="flex justify-center space-x-1">
-                            <button onclick="previewItem('${type}', ${item.id})" class="p-2 text-blue-600 hover:bg-blue-100 rounded" title="Preview"><i class="fas fa-eye"></i></button>
-                            <button onclick="editItem('${type}', ${item.id})" class="p-2 text-yellow-600 hover:bg-yellow-100 rounded" title="Edit"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteItem('${type}', ${item.id})" class="p-2 text-red-600 hover:bg-red-100 rounded" title="Buang"><i class="fas fa-trash"></i></button>
-                        </div>
+            // Render Sekolah
+            const sBody = document.getElementById('table-sekolah-body');
+            sBody.innerHTML = db.sekolah.map((item, index) => `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4 border text-center font-bold">${index + 1}</td>
+                    <td class="p-4 border text-sm">${item.tarikh}</td>
+                    <td class="p-4 border font-semibold text-blue-700">${item.peringkat}</td>
+                    <td class="p-4 border font-medium">${item.program}</td>
+                    <td class="p-4 border text-sm">${item.anjuran}</td>
+                    <td class="p-4 border text-xs"><span class="bg-gray-200 px-2 py-1 rounded">${item.kategori}</span></td>
+                    <td class="p-4 border font-bold text-green-700">${item.pencapaian}</td>
+                    <td class="p-4 border no-print text-center flex justify-center space-x-2">
+                        <button onclick="editItem('sekolah', '${item.id}')" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition shadow-sm"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteItem('sekolah', '${item.id}')" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition shadow-sm"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
-            `;
+            `).join('');
 
-            document.getElementById('table-sekolah-body').innerHTML = db.sekolah.length ? db.sekolah.map((item, idx) => renderRow(item, idx, 'sekolah')).join('') : '<tr><td colspan="8" class="p-8 text-center text-gray-400">Tiada data sekolah</td></tr>';
-            document.getElementById('table-guru-body').innerHTML = db.guru.length ? db.guru.map((item, idx) => renderRow(item, idx, 'guru')).join('') : '<tr><td colspan="9" class="p-8 text-center text-gray-400">Tiada data guru</td></tr>';
-        }
-
-        // Render Analisis
-        function renderAnalisis() {
-            // Stats calculation
-            const allData = [...db.sekolah, ...db.guru];
-            const stats = { 'ANTARABANGSA': 0, 'KEBANGSAAN': 0, 'NEGERI': 0, 'DAERAH': 0 };
-            allData.forEach(item => { if(stats.hasOwnProperty(item.peringkat)) stats[item.peringkat]++; });
-
-            document.getElementById('stat-antarabangsa').innerText = stats.ANTARABANGSA;
-            document.getElementById('stat-kebangsaan').innerText = stats.KEBANGSAAN;
-            document.getElementById('stat-negeri').innerText = stats.NEGERI;
-            document.getElementById('stat-daerah').innerText = stats.DAERAH;
-
-            // Guru List Processing
-            const guruList = MASTER_GURU_LIST.map(master => {
-                const achieves = db.guru.filter(g => g.guru === master.name);
-                return {
-                    name: master.name,
-                    drive: master.drive,
-                    count: achieves.length,
-                    details: achieves.map(a => `<span class="inline-block bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full mr-1 mb-1">${a.peringkat}: ${a.program}</span>`).join(' ')
-                };
-            });
-
-            guruList.sort((a, b) => b.count - a.count);
-
-            document.getElementById('analisis-guru-body').innerHTML = guruList.map(g => `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-3 border font-semibold text-sm">${g.name}</td>
-                    <td class="p-3 border text-center font-bold text-lg text-blue-700">${g.count}</td>
-                    <td class="p-3 border">${g.count > 0 ? g.details : '<span class="text-gray-400 italic text-xs">Tiada rekod data</span>'}</td>
-                    <td class="p-3 border text-center">
-                        <a href="${g.drive}" target="_blank" class="text-blue-600 hover:text-blue-800">
-                            <i class="fab fa-google-drive text-xl"></i>
-                        </a>
+            // Render Guru
+            const gBody = document.getElementById('table-guru-body');
+            gBody.innerHTML = db.guru.map((item, index) => `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4 border text-center font-bold">${index + 1}</td>
+                    <td class="p-4 border text-sm">${item.tarikh}</td>
+                    <td class="p-4 border font-bold text-gray-800">${item.guru}</td>
+                    <td class="p-4 border font-semibold text-blue-700">${item.peringkat}</td>
+                    <td class="p-4 border font-medium">${item.program}</td>
+                    <td class="p-4 border text-sm">${item.anjuran}</td>
+                    <td class="p-4 border text-xs"><span class="bg-gray-200 px-2 py-1 rounded">${item.kategori}</span></td>
+                    <td class="p-4 border font-bold text-green-700">${item.pencapaian}</td>
+                    <td class="p-4 border no-print text-center flex justify-center space-x-2">
+                        <button onclick="editItem('guru', '${item.id}')" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition shadow-sm"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteItem('guru', '${item.id}')" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition shadow-sm"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // Preview
-        function previewItem(type, id) {
-            const item = db[type].find(i => i.id == id);
-            const content = `
-                <div class="p-4 bg-yellow-50 rounded-lg">
-                    <p><strong>Tarikh:</strong> ${item.tarikh}</p>
-                    ${item.guru ? `<p><strong>Guru:</strong> ${item.guru}</p>` : ''}
-                    <p><strong>Peringkat:</strong> ${item.peringkat}</p>
-                    <p><strong>Program:</strong> ${item.program}</p>
-                    <p><strong>Pencapaian:</strong> ${item.pencapaian}</p>
-                    <div class="mt-4 pt-4 border-t">
-                        <a href="${item.eviden}" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg inline-block text-sm">
-                            <i class="fab fa-google-drive mr-2"></i> Buka Folder Eviden
-                        </a>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modalContent').innerHTML = content;
-            document.getElementById('previewModal').classList.remove('hidden');
-        }
-
-        function closeModal() { document.getElementById('previewModal').classList.add('hidden'); }
-
-        // Delete
         function deleteItem(type, id) {
             if(confirm('Padam rekod ini?')) {
                 db[type] = db[type].filter(item => item.id != id);
                 localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
                 renderTables();
-                if(!document.getElementById('content-analisis').classList.contains('hidden')) renderAnalisis();
-                // 🔥 TAMBAH DI SINI (JANGAN UBAH YANG ATAS)
-        (async () => {
-            try {
-                const snapshot = await window.fb.getDocs(
-                    window.fb.collection(
-                        window.dbFirestore,
-                        type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru'
-                    )
-                );
-
-                snapshot.forEach(async (docItem) => {
-                    if (docItem.data().id == id) {
-                        await window.fb.deleteDoc(
-                            window.fb.doc(
-                                window.dbFirestore,
-                                type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru',
-                                docItem.id
-                            )
-                        );
-                    }
-                });
-
-                console.log("✅ Deleted from Firestore");
-            } catch (err) {
-                console.error("❌ Delete error:", err);
-            }
-        })();
+                renderAnalisis();
             }
         }
 
-        // Edit
         function editItem(type, id) {
             const item = db[type].find(i => i.id == id);
             showTab(type);
-            document.getElementById(`edit-id-${type}`).value = item.id;
+            document.getElementById(`edit-id-${type}`).value = id;
             
             if(type === 'sekolah') {
                 document.getElementById('peringkat-sekolah').value = item.peringkat;
                 document.getElementById('program-sekolah').value = item.program;
+                document.getElementById('eviden-sekolah').value = item.eviden;
                 document.getElementById('anjuran-sekolah').value = item.anjuran;
                 document.getElementById('kategori-sekolah').value = item.kategori;
                 document.getElementById('capai-sekolah').value = item.pencapaian;
-                document.getElementById('eviden-sekolah').value = item.eviden;
             } else {
                 document.getElementById('peringkat-guru').value = item.peringkat;
                 document.getElementById('program-guru').value = item.program;
                 document.getElementById('anjuran-guru').value = item.anjuran;
                 document.getElementById('kategori-guru').value = item.kategori;
                 document.getElementById('capai-guru').value = item.pencapaian;
+                // Pilih guru dalam dropdown
                 const select = document.getElementById('guruSelect');
-                for(let i=0; i<select.options.length; i++) {
-                    if(select.options[i].text === item.guru) {
-                        select.selectedIndex = i;
-                        break;
-                    }
+                for(let opt of select.options) {
+                    if(opt.text === item.guru) opt.selected = true;
                 }
                 updateEvidenGuru();
             }
         }
 
-        window.onload = () => {
-            renderTables();
-            renderAnalisis();
-        };
-    </script>
-      <!-- TAMBAH DI BAWAH SEKALI SEBELUM </body> -->
+        function renderAnalisis() {
+            // Count Stats
+            const combined = [...db.sekolah, ...db.guru];
+            const counts = { 'ANTARABANGSA': 0, 'KEBANGSAAN': 0, 'NEGERI': 0, 'DAERAH': 0 };
+            combined.forEach(item => { if(counts[item.peringkat] !== undefined) counts[item.peringkat]++; });
 
-<script type="module">
-// ================= FIREBASE SETUP =================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"; // TAMBAH INI
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            document.getElementById('stat-antarabangsa').innerText = counts['ANTARABANGSA'];
+            document.getElementById('stat-kebangsaan').innerText = counts['KEBANGSAAN'];
+            document.getElementById('stat-negeri').innerText = counts['NEGERI'];
+            document.getElementById('stat-daerah').innerText = counts['DAERAH'];
 
-// 🔥 GANTI CONFIG INI
-const firebaseConfig = {
-  apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
-  authDomain: "ecapaiskbt.firebaseapp.com",
-  projectId: "ecapaiskbt",
-  storageBucket: "ecapaiskbt.firebasestorage.app",
-  messagingSenderId: "328855405603",
-  appId: "1:328855405603:web:32c5e193845b237e065d96"
-};
-
-// INIT
-const app = initializeApp(firebaseConfig);
-const dbFirestore = getFirestore(app);
-const auth = getAuth(app);
-
-    
-// LOGIN (WAJIB untuk rules)
-signInAnonymously(auth);
-
-// GLOBAL
-window.dbFirestore = dbFirestore;
-window.fb = { collection, addDoc, getDocs, deleteDoc, doc };
-
-// ================= OVERRIDE FUNCTION ASAL =================
-
-// MODIFY saveData (tanpa ubah logic asal)
-const originalSaveData = window.saveData;
-
-window.saveData = async function(event, type) {
-    // RUN FUNCTION ASAL
-    originalSaveData(event, type);
-
-    // AMBIL DATA TERAKHIR
-    const lastData = window.db[type][window.db[type].length - 1];
-
-    try {
-        await window.fb.addDoc(
-            window.fb.collection(
-                window.dbFirestore,
-                type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru'
-            ),
-            lastData
-        );
-        console.log("✅ Data masuk Firestore");
-    } catch (err) {
-        console.error("❌ Error Firestore:", err);
-    }
-};
-
-// ================= LOAD DATA =================
-async function loadFirestoreData() {
-    const jenis = [
-        { key: 'sekolah', col: 'rekod_sekolah' },
-        { key: 'guru', col: 'rekod_guru' }
-    ];
-
-    for (let j of jenis) {
-        const snapshot = await window.fb.getDocs(
-            window.fb.collection(window.dbFirestore, j.col)
-        );
-
-        window.db[j.key] = [];
-
-        snapshot.forEach(doc => {
-            window.db[j.key].push(doc.data());
-        });
-        // TAMBAH INI - sync localStorage dengan Firestore
-        localStorage.setItem(`skbt_${j.key}`, JSON.stringify(window.db[j.key]));
-    }
-
-    window.renderTables();
-    window.renderAnalisis();
-}
-
-// ================= AUTO LOAD =================
-window.addEventListener("load", async () => {
-    await loadFirestoreData();
-});
-</script>
-    <div id="security-alert" class="no-print" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; background-color: #ef4444; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid white;">
-        <i class="fas fa-exclamation-triangle mr-2"></i> AMARAN: Akses kod sumber telah disekat!
-    </div>
-
-    <script>
-        function tunjukAmaran() {
-            const alertBox = document.getElementById('security-alert');
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+            // Master Table Analysis
+            const aBody = document.getElementById('analisis-guru-body');
+            aBody.innerHTML = MASTER_GURU_LIST.map(master => {
+                const pencapaianGuru = db.guru.filter(g => g.guru === master.name);
+                const listProgram = pencapaianGuru.length > 0 
+                    ? pencapaianGuru.map(p => `• ${p.program} (${p.peringkat})`).join('<br>')
+                    : '<span class="text-gray-400 italic">Tiada rekod dikesan</span>';
+                
+                return `
+                    <tr class="${pencapaianGuru.length > 0 ? 'bg-blue-50' : ''}">
+                        <td class="p-4 border font-bold">${master.name}</td>
+                        <td class="p-4 border text-center">
+                            <span class="px-3 py-1 rounded-full ${pencapaianGuru.length > 0 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'} font-bold">
+                                ${pencapaianGuru.length}
+                            </span>
+                        </td>
+                        <td class="p-4 border text-sm">${listProgram}</td>
+                        <td class="p-4 border text-center">
+                            <a href="${master.drive}" target="_blank" class="text-blue-500 hover:text-blue-700 text-xl"><i class="fab fa-google-drive"></i></a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            tunjukAmaran();
-        });
+        function closeModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "F12" || (e.ctrlKey && e.key === "u") || (e.ctrlKey && e.shiftKey && e.key === "I") || (e.ctrlKey && e.key === "s")) {
-                e.preventDefault();
-                tunjukAmaran();
-            }
-        });
+        // Initialize App
+        window.onload = () => {
+            showTab('analisis'); // Default Tab
+        };
     </script>
-
-      
 </body>
 </html>
