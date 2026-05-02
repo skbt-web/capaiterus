@@ -10,12 +10,21 @@
         body { background-color: #ffffff; font-family: 'Inter', sans-serif; }
         .bg-custom-yellow { background-color: #FFD700; }
         .tab-active { border-bottom: 4px solid #FFD700; color: #000; font-weight: bold; }
+        
         @media print {
-            .no-print { display: none !important; }
-            .print-area { display: block !important; width: 100%; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+            .no-print, header, nav, button, .stats-card, #pautanGuruWrapper, .note-box { display: none !important; }
+            body { background-color: white !important; padding: 0 !important; margin: 0 !important; }
+            .container { max-width: 100% !important; width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            main { padding: 0 !important; }
+            .tab-content { display: none !important; }
+            .tab-content:not(.hidden) { display: block !important; }
+            .print-area, .printable-table { display: block !important; width: 100% !important; }
+            table { width: 100% !important; border-collapse: collapse !important; font-size: 10pt !important; }
+            th, td { border: 1px solid #000 !important; padding: 6px !important; }
+            th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; }
+            @page { size: landscape; margin: 1cm; }
         }
+
         .stats-card { transition: transform 0.2s; }
         .stats-card:hover { transform: translateY(-5px); }
         .logo-img { width: 60px; height: 60px; object-fit: contain; }
@@ -28,7 +37,6 @@
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="bg-white p-1 rounded-full shadow-lg flex items-center justify-center overflow-hidden w-16 h-16">
-                    <!-- Logo Updated to logo.png -->
                     <img src="logo.png" alt="Logo SKBT" class="logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=SKBT'">
                 </div>
                 <div>
@@ -72,9 +80,9 @@
         <section id="content-sekolah" class="tab-content hidden">
             <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border-t-8 border-yellow-400 p-6 md:p-10">
                 <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
-                    <i class="fas fa-file-signature text-yellow-500 mr-3"></i> BORANG REKOD SEKOLAH
+                    <i class="fas fa-file-signature text-yellow-500 mr-3"></i> <span id="form-title-sekolah">BORANG REKOD SEKOLAH</span>
                 </h2>
-                <form id="formSekolah" onsubmit="saveData(event, 'sekolah')">
+                <form id="formSekolah">
                     <input type="hidden" id="edit-id-sekolah">
                     <div class="grid grid-cols-1 gap-6">
                         <div>
@@ -90,9 +98,6 @@
                         </div>
                         <div>
                             <label class="block font-semibold mb-2">Pautan Eviden Sekolah</label>
-                            <a href="https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing" target="_blank" class="text-blue-600 block bg-blue-50 p-3 rounded-lg border border-blue-100 mb-2 hover:bg-blue-100 transition">
-                                <i class="fab fa-google-drive mr-2"></i> Folder Google Drive Sekolah
-                            </a>
                             <input type="url" id="eviden-sekolah" placeholder="Letak pautan spesifik jika ada" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
                         </div>
                         <div>
@@ -113,7 +118,8 @@
                                 <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
                             </select>
                         </div>
-                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD SEKOLAH</button>
+                        <button type="submit" id="btn-submit-sekolah" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD SEKOLAH</button>
+                        <button type="button" id="btn-cancel-sekolah" onclick="cancelEdit('sekolah')" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg transition-all">BATAL KEMASKINI</button>
                     </div>
                 </form>
             </div>
@@ -123,9 +129,9 @@
         <section id="content-individu" class="tab-content hidden">
             <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border-t-8 border-yellow-400 p-6 md:p-10">
                 <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
-                    <i class="fas fa-user-edit text-yellow-500 mr-3"></i> BORANG REKOD INDIVIDU
+                    <i class="fas fa-user-edit text-yellow-500 mr-3"></i> <span id="form-title-guru">BORANG REKOD INDIVIDU</span>
                 </h2>
-                <form id="formGuru" onsubmit="saveData(event, 'guru')">
+                <form id="formGuru">
                     <input type="hidden" id="edit-id-guru">
                     <div class="grid grid-cols-1 gap-6">
                         <div>
@@ -197,7 +203,8 @@
                                 <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
                             </select>
                         </div>
-                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD INDIVIDU</button>
+                        <button type="submit" id="btn-submit-guru" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD INDIVIDU</button>
+                        <button type="button" id="btn-cancel-guru" onclick="cancelEdit('guru')" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg transition-all">BATAL KEMASKINI</button>
                     </div>
                 </form>
             </div>
@@ -265,7 +272,6 @@
         <!-- ANALISIS PENCAPAIAN -->
         <section id="content-analisis" class="tab-content">
             <div class="space-y-8">
-                <!-- Statistik Ringkas -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 no-print">
                     <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 stats-card">
                         <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Antarabangsa</p>
@@ -285,19 +291,23 @@
                     </div>
                 </div>
 
-                <!-- Jadual Analisis Mengikut Guru -->
                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center uppercase">
-                        <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
-                    </h2>
-                    <div class="overflow-x-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center uppercase">
+                            <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
+                        </h2>
+                        <button onclick="window.print()" class="no-print bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center hover:bg-blue-700 transition shadow">
+                            <i class="fas fa-print mr-2"></i> Cetak Laporan Analisis
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto printable-table">
                         <table class="w-full text-left border-collapse border border-gray-100">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-700 font-bold">
                                     <th class="p-4 border">NAMA GURU</th>
                                     <th class="p-4 border text-center">BIL. PENCAPAIAN</th>
                                     <th class="p-4 border">SENARAI PROGRAM & TAHAP</th>
-                                    <th class="p-4 border text-center">EVIDEN (DRIVE)</th>
+                                    <th class="p-4 border text-center no-print">EVIDEN (DRIVE)</th>
                                 </tr>
                             </thead>
                             <tbody id="analisis-guru-body" class="divide-y"></tbody>
@@ -305,8 +315,7 @@
                     </div>
                 </div>
 
-                <!-- Footer Analisis -->
-                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 no-print">
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 no-print note-box">
                     <h4 class="font-bold text-blue-800 mb-2 flex items-center">
                         <i class="fas fa-info-circle mr-2"></i> Nota Semakan Analisis
                     </h4>
@@ -317,26 +326,10 @@
 
     </main>
 
-    <!-- Modal Preview -->
-    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl transition">&times;</button>
-            <h3 class="text-xl font-bold border-b pb-2 mb-4 flex items-center">
-                <i class="fas fa-eye mr-2 text-yellow-500"></i> Pratonton Rekod
-            </h3>
-            <div id="modalContent" class="space-y-4 text-gray-700"></div>
-            <div class="mt-8 flex justify-end">
-                <button onclick="closeModal()" class="bg-gray-200 hover:bg-gray-300 px-8 py-2 rounded-lg font-bold transition">Tutup</button>
-            </div>
-        </div>
-    </div>
-
    <script type="module">
-    // 1. IMPORT FIREBASE SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 2. KONFIGURASI FIREBASE (KEKAL ASAL)
     const firebaseConfig = {
         apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
         authDomain: "ecapaiskbt.firebaseapp.com",
@@ -350,7 +343,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 3. SENARAI GURU MASTER (KEKAL STRUKTUR ASAL)
     const MASTER_GURU_LIST = [
         { name: "ADLIN FAZLINDA BINTI ASNAN", drive: "https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing" },
         { name: "DAYANG NORFARAHAIN FAEEZA BINTI HASSIM", drive: "https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing" },
@@ -382,26 +374,161 @@
         { name: "NOR AZAH BINTI MORI", drive: "https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing" }
     ];
 
-    // 4. FUNGSI ANALISIS (YANG ANDA MINTA)
+    window.showTab = function(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
+        document.getElementById('content-' + tabId).classList.remove('hidden');
+        document.getElementById('tab-' + tabId).classList.add('tab-active');
+        if(tabId.includes('rekod')) renderTables();
+        if(tabId === 'analisis') renderAnalisis();
+    };
+
+    window.saveData = async function(event, type) {
+        event.preventDefault();
+        const btn = document.getElementById(`btn-submit-${type}`);
+        const editId = document.getElementById(`edit-id-${type}`).value;
+        btn.disabled = true;
+        btn.innerText = "PROSES...";
+
+        try {
+            const data = {
+                peringkat: document.getElementById(`peringkat-${type}`).value,
+                program: document.getElementById(`program-${type}`).value,
+                anjuran: document.getElementById(`anjuran-${type}`).value,
+                kategori: document.getElementById(`kategori-${type}`).value,
+                pencapaian: document.getElementById(`capai-${type}`).value,
+                updatedAt: serverTimestamp()
+            };
+
+            if(type === 'sekolah') {
+                data.eviden = document.getElementById('eviden-sekolah').value || '';
+            } else {
+                const gSelect = document.getElementById('guruSelect');
+                data.guru = gSelect.options[gSelect.selectedIndex].text;
+            }
+
+            if(editId) {
+                await updateDoc(doc(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru', editId), data);
+                alert("Rekod Berjaya Dikemaskini!");
+                cancelEdit(type);
+            } else {
+                data.tarikh = new Date().toLocaleDateString('ms-MY');
+                data.createdAt = serverTimestamp();
+                await addDoc(collection(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru'), data);
+                alert("Rekod Baru Berjaya Disimpan!");
+            }
+            
+            document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
+            showTab(`rekod-${type}`);
+        } catch (e) {
+            alert("Ralat: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = editId ? `KEMASKINI REKOD ${type.toUpperCase()}` : `SIMPAN REKOD ${type.toUpperCase()}`;
+        }
+    };
+
+    window.editRecord = async function(id, type) {
+        const docRef = doc(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru', id);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            showTab(type === 'sekolah' ? 'sekolah' : 'individu');
+            
+            document.getElementById(`edit-id-${type}`).value = id;
+            document.getElementById(`peringkat-${type}`).value = data.peringkat;
+            document.getElementById(`program-${type}`).value = data.program;
+            document.getElementById(`anjuran-${type}`).value = data.anjuran;
+            document.getElementById(`kategori-${type}`).value = data.kategori;
+            document.getElementById(`capai-${type}`).value = data.pencapaian;
+            
+            if(type === 'sekolah') {
+                document.getElementById('eviden-sekolah').value = data.eviden || '';
+            } else {
+                const gSelect = document.getElementById('guruSelect');
+                for(let i=0; i<gSelect.options.length; i++) {
+                    if(gSelect.options[i].text === data.guru) {
+                        gSelect.selectedIndex = i;
+                        updateEvidenGuru();
+                        break;
+                    }
+                }
+            }
+            
+            document.getElementById(`form-title-${type}`).innerText = `KEMASKINI REKOD ${type.toUpperCase()}`;
+            document.getElementById(`btn-submit-${type}`).innerText = `KEMASKINI REKOD ${type.toUpperCase()}`;
+            document.getElementById(`btn-cancel-${type}`).classList.remove('hidden');
+        }
+    };
+
+    window.cancelEdit = function(type) {
+        document.getElementById(`edit-id-${type}`).value = "";
+        document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
+        document.getElementById(`form-title-${type}`).innerText = `BORANG REKOD ${type.toUpperCase()}`;
+        document.getElementById(`btn-submit-${type}`).innerText = `SIMPAN REKOD ${type.toUpperCase()}`;
+        document.getElementById(`btn-cancel-${type}`).classList.add('hidden');
+        if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
+    };
+
+    window.deleteRecord = async function(id, type) {
+        if(confirm("Adakah anda pasti mahu memadam rekod ini secara kekal?")) {
+            try {
+                await deleteDoc(doc(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru', id));
+                alert("Rekod telah dipadam.");
+                renderTables();
+            } catch (e) {
+                alert("Gagal memadam: " + e.message);
+            }
+        }
+    };
+
+    async function renderTables() {
+        const types = [
+            { id: 'table-sekolah-body', col: 'skbt_sekolah', fields: ['tarikh', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'], type: 'sekolah' },
+            { id: 'table-guru-body', col: 'skbt_guru', fields: ['tarikh', 'guru', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'], type: 'guru' }
+        ];
+
+        for (const t of types) {
+            const tbody = document.getElementById(t.id);
+            if(!tbody) continue;
+            tbody.innerHTML = '<tr><td colspan="10" class="p-4 text-center">Memuatkan...</td></tr>';
+
+            const q = query(collection(db, t.col), orderBy("createdAt", "desc"));
+            const snap = await getDocs(q);
+            tbody.innerHTML = "";
+            let bil = 1;
+
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                const id = docSnap.id;
+                let row = `<tr class="hover:bg-gray-50"><td class="p-4 border text-center">${bil++}</td>`;
+                t.fields.forEach(f => row += `<td class="p-4 border text-sm">${d[f] || '-'}</td>`);
+                row += `<td class="p-4 border no-print flex justify-center space-x-2">
+                    <button onclick="editRecord('${id}', '${t.type}')" class="bg-yellow-100 text-yellow-700 p-2 rounded hover:bg-yellow-200" title="Edit"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteRecord('${id}', '${t.type}')" class="bg-red-100 text-red-700 p-2 rounded hover:bg-red-200" title="Padam"><i class="fas fa-trash"></i></button>
+                </td></tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+    }
+
     async function renderAnalisis() {
         const tbody = document.getElementById('analisis-guru-body');
         if(!tbody) return;
         tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500 italic">Memproses Analisis...</td></tr>';
 
         try {
-            // Ambil semua data rekod individu dari Firestore
             const snapshot = await getDocs(collection(db, "skbt_guru"));
             const allRecords = [];
             snapshot.forEach(doc => allRecords.push(doc.data()));
 
-            // Update Statistik Statistik Ringkas (Atas)
             const countByLevel = (level) => allRecords.filter(r => r.peringkat === level).length;
             document.getElementById('stat-antarabangsa').innerText = countByLevel('ANTARABANGSA');
             document.getElementById('stat-kebangsaan').innerText = countByLevel('KEBANGSAAN');
             document.getElementById('stat-negeri').innerText = countByLevel('NEGERI');
             document.getElementById('stat-daerah').innerText = countByLevel('DAERAH');
 
-            // Bina Jadual Analisis Induk
             tbody.innerHTML = "";
             MASTER_GURU_LIST.forEach(guru => {
                 const guruRecords = allRecords.filter(r => r.guru === guru.name);
@@ -412,90 +539,15 @@
                         <td class="p-4 border font-semibold text-gray-700">${guru.name}</td>
                         <td class="p-4 border text-center font-bold text-blue-600">${guruRecords.length}</td>
                         <td class="p-4 border text-sm text-gray-600">${listPrograms}</td>
-                        <td class="p-4 border text-center">
-                            <a href="${guru.drive}" target="_blank" class="bg-blue-50 text-blue-600 p-2 rounded-full hover:bg-blue-600 hover:text-white transition inline-flex items-center justify-center w-10 h-10 shadow-sm" title="Buka Google Drive">
+                        <td class="p-4 border text-center no-print">
+                            <a href="${guru.drive}" target="_blank" class="bg-blue-50 text-blue-600 p-2 rounded-full hover:bg-blue-600 hover:text-white transition inline-flex items-center justify-center w-10 h-10 shadow-sm">
                                 <i class="fab fa-google-drive"></i>
                             </a>
                         </td>
                     </tr>`;
             });
         } catch (e) {
-            console.error("Analisis Error:", e);
             tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-500">Gagal memuatkan analisis.</td></tr>';
-        }
-    }
-
-    // 5. FUNGSI GLOBAL (WAJIB ADA SUPAYA BUTANG BERFUNGSI)
-    window.showTab = function(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
-        document.getElementById('content-' + tabId).classList.remove('hidden');
-        document.getElementById('tab-' + tabId).classList.add('tab-active');
-        
-        if(tabId.includes('rekod')) renderTables();
-        if(tabId === 'analisis') renderAnalisis();
-    };
-
-    window.saveData = async function(event, type) {
-        event.preventDefault();
-        const btn = event.submitter;
-        btn.disabled = true;
-        btn.innerText = "MENYIMPAN...";
-
-        try {
-            const entry = {
-                tarikh: new Date().toLocaleDateString('ms-MY'),
-                createdAt: serverTimestamp(),
-                peringkat: document.getElementById(`peringkat-${type}`).value,
-                program: document.getElementById(`program-${type}`).value,
-                anjuran: document.getElementById(`anjuran-${type}`).value,
-                kategori: document.getElementById(`kategori-${type}`).value,
-                pencapaian: document.getElementById(`capai-${type}`).value
-            };
-
-            if(type === 'sekolah') {
-                entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing';
-            } else {
-                const gSelect = document.getElementById('guruSelect');
-                entry.guru = gSelect.options[gSelect.selectedIndex].text;
-            }
-
-            await addDoc(collection(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru'), entry);
-            alert("Rekod Berjaya Disimpan!");
-            document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
-            if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
-            
-        } catch (e) {
-            alert("Ralat: " + e.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = `SIMPAN REKOD ${type.toUpperCase()}`;
-        }
-    };
-
-    async function renderTables() {
-        const types = [
-            { id: 'table-sekolah-body', col: 'skbt_sekolah', fields: ['tarikh', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] },
-            { id: 'table-guru-body', col: 'skbt_guru', fields: ['tarikh', 'guru', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] }
-        ];
-
-        for (const t of types) {
-            const tbody = document.getElementById(t.id);
-            if(!tbody) continue;
-            tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center">Memuatkan...</td></tr>';
-
-            const q = query(collection(db, t.col), orderBy("createdAt", "desc"));
-            const snap = await getDocs(q);
-            tbody.innerHTML = "";
-            let bil = 1;
-
-            snap.forEach(docSnap => {
-                const d = docSnap.data();
-                let row = `<tr class="hover:bg-gray-50"><td class="p-4 border text-center">${bil++}</td>`;
-                t.fields.forEach(f => row += `<td class="p-4 border text-sm">${d[f] || '-'}</td>`);
-                row += `<td class="p-4 border no-print text-center"><i class="fas fa-check-circle text-green-500"></i></td></tr>`;
-                tbody.innerHTML += row;
-            });
         }
     }
 
@@ -516,7 +568,9 @@
         alert('Pautan Dashboard Berjaya Disalin!');
     };
 
-    // Jalankan Analisis Secara Automatik Semasa Mula
+    document.getElementById('formSekolah').addEventListener('submit', (e) => saveData(e, 'sekolah'));
+    document.getElementById('formGuru').addEventListener('submit', (e) => saveData(e, 'guru'));
+
     window.onload = () => { renderAnalisis(); };
 </script>
 </body>
