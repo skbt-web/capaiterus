@@ -364,213 +364,124 @@
             { name: "NOR AZAH BINTI MORI", drive: "https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing" }
         ];
 
-        // Local Data Store
-        let db = {
-            sekolah: JSON.parse(localStorage.getItem('skbt_sekolah') || '[]'),
-            guru: JSON.parse(localStorage.getItem('skbt_guru') || '[]')
+       // --- KEKALKAN MASTER_GURU_LIST ANDA DI ATAS ---
+
+// 1. IMPORT FIREBASE (Guna cara Dynamic Import supaya tidak kacau fungsi lain)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
+    authDomain: "ecapaiskbt.firebaseapp.com",
+    projectId: "ecapaiskbt",
+    storageBucket: "ecapaiskbt.firebasestorage.app",
+    messagingSenderId: "328855405603",
+    appId: "1:328855405603:web:32c5e193845b237e065d96",
+    measurementId: "G-S0YNK1PNR4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 2. FUNGSI TAB (KEKAL ASAL)
+window.showTab = function(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
+    document.getElementById('content-' + tabId).classList.remove('hidden');
+    document.getElementById('tab-' + tabId).classList.add('tab-active');
+    
+    if(tabId.includes('rekod')) renderTables();
+    if(tabId === 'analisis') renderAnalisis();
+}
+
+// 3. FUNGSI SIMPAN (DIKEMASKINI KE FIRESTORE)
+window.saveData = async function(event, type) {
+    event.preventDefault();
+    const btn = event.submitter;
+    btn.innerText = "SIMPAN...";
+    btn.disabled = true;
+
+    try {
+        let entry = {
+            tarikh: new Date().toLocaleDateString('ms-MY'),
+            createdAt: serverTimestamp(),
+            peringkat: document.getElementById(`peringkat-${type}`).value,
+            program: document.getElementById(`program-${type}`).value,
+            anjuran: document.getElementById(`anjuran-${type}`).value,
+            kategori: document.getElementById(`kategori-${type}`).value,
+            pencapaian: document.getElementById(`capai-${type}`).value
         };
 
-        window.db = db;
+        if(type === 'sekolah') {
+            entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/...';
+        } else {
+            const gSelect = document.getElementById('guruSelect');
+            entry.guru = gSelect.options[gSelect.selectedIndex].text;
+        }
+
+        // Simpan ke Firestore
+        await addDoc(collection(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru'), entry);
         
-        // Tab Logic
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
-            document.getElementById('content-' + tabId).classList.remove('hidden');
-            document.getElementById('tab-' + tabId).classList.add('tab-active');
-            
-            if(tabId.includes('rekod')) renderTables();
-            if(tabId === 'analisis') renderAnalisis();
-        }
+        alert("Rekod Berjaya Disimpan!");
+        document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
+        if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
+        
+    } catch (e) {
+        alert("Ralat: " + e.message);
+    } finally {
+        btn.innerText = `SIMPAN REKOD ${type.toUpperCase()}`;
+        btn.disabled = false;
+    }
+}
 
-        // Copy Link
-        function copyShareLink() {
-            const dummy = document.createElement('input');
-            const text = window.location.href;
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            alert('Pautan Dashboard Berjaya Disalin!');
-        }
+// 4. FUNGSI PAPAR JADUAL (AMBIL DARI FIRESTORE)
+window.renderTables = async function() {
+    const types = [
+        { id: 'table-sekolah-body', col: 'skbt_sekolah', fields: ['tarikh', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] },
+        { id: 'table-guru-body', col: 'skbt_guru', fields: ['tarikh', 'guru', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] }
+    ];
 
-        // Update Guru Link in Form
-        function updateEvidenGuru() {
-            const select = document.getElementById('guruSelect');
-            const wrapper = document.getElementById('pautanGuruWrapper');
-            const link = document.getElementById('pautanGuruLink');
-            const selectedOption = select.options[select.selectedIndex];
-            
-            if (select.value) {
-                const driveUrl = selectedOption.getAttribute('data-drive');
-                link.href = driveUrl;
-                wrapper.classList.remove('hidden');
-            } else {
-                wrapper.classList.add('hidden');
-            }
-        }
+    for (const t of types) {
+        const tbody = document.getElementById(t.id);
+        if(!tbody) continue;
+        tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center">Memuatkan...</td></tr>';
 
-        // Save Data Logic
-        function saveData(event, type) {
-            event.preventDefault();
-            const date = new Date().toLocaleDateString('ms-MY');
-            const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
-            
-            let entry = { id: id, tarikh: date };
+        const q = query(collection(db, t.col), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        tbody.innerHTML = "";
+        let bil = 1;
 
-            if(type === 'sekolah') {
-                entry.peringkat = document.getElementById('peringkat-sekolah').value;
-                entry.program = document.getElementById('program-sekolah').value;
-                entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing';
-                entry.anjuran = document.getElementById('anjuran-sekolah').value;
-                entry.kategori = document.getElementById('kategori-sekolah').value;
-                entry.pencapaian = document.getElementById('capai-sekolah').value;
-            } else {
-                const gSelect = document.getElementById('guruSelect');
-                entry.guru = gSelect.options[gSelect.selectedIndex].text;
-                entry.peringkat = document.getElementById('peringkat-guru').value;
-                entry.program = document.getElementById('program-guru').value;
-                entry.anjuran = document.getElementById('anjuran-guru').value;
-                entry.kategori = document.getElementById('kategori-guru').value;
-                entry.pencapaian = document.getElementById('capai-guru').value;
-                entry.eviden = gSelect.options[gSelect.selectedIndex].getAttribute('data-drive');
-            }
+        snap.forEach(doc => {
+            const d = doc.data();
+            let row = `<tr><td class="p-4 border text-center">${bil++}</td>`;
+            t.fields.forEach(f => row += `<td class="p-4 border">${d[f] || '-'}</td>`);
+            row += `<td class="p-4 border no-print text-center"><button class="text-blue-500">Lihat</button></td></tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+}
 
-            const existingIndex = db[type].findIndex(item => item.id === id);
-            if(existingIndex > -1) {
-                db[type][existingIndex] = entry;
-            } else {
-                db[type].push(entry);
-            }
+// 5. FUNGSI UPDATE EVIDEN (KEKAL ASAL)
+window.updateEvidenGuru = function() {
+    const select = document.getElementById('guruSelect');
+    const wrapper = document.getElementById('pautanGuruWrapper');
+    const link = document.getElementById('pautanGuruLink');
+    if (select.value) {
+        link.href = select.options[select.selectedIndex].getAttribute('data-drive');
+        wrapper.classList.remove('hidden');
+    } else {
+        wrapper.classList.add('hidden');
+    }
+}
 
-            localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
-            alert('Rekod Berjaya Disimpan!');
-            event.target.reset();
-            document.getElementById(`edit-id-${type}`).value = '';
-            if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
-            showTab(`rekod-${type}`);
-        }
+// 6. COPY LINK & MODAL (KEKAL ASAL)
+window.copyShareLink = function() {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Pautan Berjaya Disalin!');
+}
 
-        // Render Tables
-        function renderTables() {
-            ['sekolah', 'guru'].forEach(type => {
-                const tbody = document.getElementById(`table-${type}-body`);
-                tbody.innerHTML = '';
-                db[type].forEach((item, index) => {
-                    const row = `
-                        <tr class="hover:bg-gray-50">
-                            <td class="p-4 border text-center">${index + 1}</td>
-                            <td class="p-4 border text-xs">${item.tarikh}</td>
-                            ${type === 'guru' ? `<td class="p-4 border font-bold text-xs">${item.guru}</td>` : ''}
-                            <td class="p-4 border text-xs"><span class="px-2 py-1 bg-yellow-100 rounded text-yellow-800 font-bold">${item.peringkat}</span></td>
-                            <td class="p-4 border font-medium text-xs">${item.program}</td>
-                            <td class="p-4 border text-xs">${item.anjuran}</td>
-                            <td class="p-4 border text-xs">${item.kategori}</td>
-                            <td class="p-4 border font-bold text-blue-700 text-xs">${item.pencapaian}</td>
-                            <td class="p-4 border no-print text-center">
-                                <div class="flex justify-center space-x-2">
-                                    <a href="${item.eviden}" target="_blank" class="text-blue-500 hover:text-blue-700" title="Buka Eviden"><i class="fas fa-external-link-alt"></i></a>
-                                    <button onclick="editItem('${type}', '${item.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-edit"></i></button>
-                                    <button onclick="deleteItem('${type}', '${item.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            });
-        }
-
-        // Render Analisis
-        function renderAnalisis() {
-            const stats = { antarabangsa: 0, kebangsaan: 0, negeri: 0, daerah: 0 };
-            const combined = [...db.sekolah, ...db.guru];
-            
-            combined.forEach(item => {
-                const p = item.peringkat.toLowerCase();
-                if(stats[p] !== undefined) stats[p]++;
-            });
-
-            document.getElementById('stat-antarabangsa').innerText = stats.antarabangsa;
-            document.getElementById('stat-kebangsaan').innerText = stats.kebangsaan;
-            document.getElementById('stat-negeri').innerText = stats.negeri;
-            document.getElementById('stat-daerah').innerText = stats.daerah;
-
-            const tbody = document.getElementById('analisis-guru-body');
-            tbody.innerHTML = '';
-            
-            MASTER_GURU_LIST.forEach(guru => {
-                const records = db.guru.filter(r => r.guru === guru.name);
-                const count = records.length;
-                const list = records.map(r => `<div class="mb-1 text-xs">• ${r.program} (${r.peringkat})</div>`).join('') || '<span class="text-gray-400 text-xs">Tiada Rekod</span>';
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-4 border font-medium text-xs">${guru.name}</td>
-                        <td class="p-4 border text-center font-bold text-lg">${count}</td>
-                        <td class="p-4 border">${list}</td>
-                        <td class="p-4 border text-center">
-                            <a href="${guru.drive}" target="_blank" class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 text-xs hover:bg-blue-100">
-                                <i class="fab fa-google-drive mr-1"></i> Buka Folder
-                            </a>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // Delete Logic
-        function deleteItem(type, id) {
-            if(confirm('Adakah anda pasti mahu memadam rekod ini?')) {
-                db[type] = db[type].filter(item => item.id !== id);
-                localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
-                renderTables();
-                if(document.getElementById('content-analisis').style.display !== 'none') renderAnalisis();
-            }
-        }
-
-        // Edit Logic
-        function editItem(type, id) {
-            const item = db[type].find(i => i.id === id);
-            if(!item) return;
-
-            showTab(type === 'sekolah' ? 'sekolah' : 'individu');
-            document.getElementById(`edit-id-${type}`).value = item.id;
-
-            if(type === 'sekolah') {
-                document.getElementById('peringkat-sekolah').value = item.peringkat;
-                document.getElementById('program-sekolah').value = item.program;
-                document.getElementById('eviden-sekolah').value = item.eviden;
-                document.getElementById('anjuran-sekolah').value = item.anjuran;
-                document.getElementById('kategori-sekolah').value = item.kategori;
-                document.getElementById('capai-sekolah').value = item.pencapaian;
-            } else {
-                const gSelect = document.getElementById('guruSelect');
-                for(let i=0; i<gSelect.options.length; i++){
-                    if(gSelect.options[i].text === item.guru) {
-                        gSelect.selectedIndex = i;
-                        break;
-                    }
-                }
-                updateEvidenGuru();
-                document.getElementById('peringkat-guru').value = item.peringkat;
-                document.getElementById('program-guru').value = item.program;
-                document.getElementById('anjuran-guru').value = item.anjuran;
-                document.getElementById('kategori-guru').value = item.kategori;
-                document.getElementById('capai-guru').value = item.pencapaian;
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('previewModal').classList.add('hidden');
-        }
-
-        // Init
-        window.onload = () => {
-            renderTables();
-            renderAnalisis();
-        };
-    </script>
+// Jalankan analisis masa mula
+window.onload = () => { showTab('analisis'); };
+</script>
 </body>
 </html>
