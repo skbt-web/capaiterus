@@ -222,7 +222,7 @@
                     </button>
                 </div>
                 <div class="print-area">
-                    <h1 class="print-title">REKOD PENCAPAIAN SEKOLAH</h1>
+                    <h1 class="print-title">REKOD PENCAPAIAN SEKOLAH TAHUN <span class="current-year-print"></span></h1>
                     <table class="w-full text-left border-collapse border border-gray-200">
                         <thead>
                             <tr class="bg-yellow-100 text-gray-800 font-bold">
@@ -252,7 +252,7 @@
                     </button>
                 </div>
                 <div class="print-area">
-                    <h1 class="print-title">REKOD PENCAPAIAN GURU</h1>
+                    <h1 class="print-title">REKOD PENCAPAIAN GURU TAHUN <span class="current-year-print"></span></h1>
                     <table class="w-full text-left border-collapse border border-gray-200">
                         <thead>
                             <tr class="bg-yellow-100 text-gray-800 font-bold">
@@ -305,7 +305,7 @@
                         </button>
                     </div>
                     <div class="overflow-x-auto printable-table">
-                        <h1 class="print-title">REKOD ANALISIS PENCAPAIAN GURU</h1>
+                        <h1 class="print-title">REKOD ANALISIS PENCAPAIAN GURU TAHUN <span class="current-year-print"></span></h1>
                         <table class="w-full text-left border-collapse border border-gray-100">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-700 font-bold">
@@ -516,6 +516,7 @@
                 tbody.innerHTML += row;
             });
         }
+        updatePrintYear();
     }
 
     async function renderAnalisis() {
@@ -551,9 +552,17 @@
                         </td>
                     </tr>`;
             });
+            updatePrintYear();
         } catch (e) {
             tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-500">Gagal memuatkan analisis.</td></tr>';
         }
+    }
+
+    function updatePrintYear() {
+        const year = new Date().getFullYear();
+        document.querySelectorAll('.current-year-print').forEach(el => {
+            el.innerText = year;
+        });
     }
 
     window.updateEvidenGuru = function() {
@@ -576,7 +585,10 @@
     document.getElementById('formSekolah').addEventListener('submit', (e) => saveData(e, 'sekolah'));
     document.getElementById('formGuru').addEventListener('submit', (e) => saveData(e, 'guru'));
 
-    window.onload = () => { renderAnalisis(); };
+    window.onload = () => { 
+        renderAnalisis(); 
+        updatePrintYear();
+    };
 </script>
 </body>
 </html>
