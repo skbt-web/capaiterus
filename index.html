@@ -1,434 +1,576 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>e-CAPAI SKBT - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #ffffff; font-family: 'Inter', sans-serif; }
-        .bg-custom-yellow { background-color: #FFD700; }
-        .tab-active { border-bottom: 4px solid #FFD700; color: #000; font-weight: bold; }
-        @media print {
-            .no-print { display: none !important; }
-            .print-area { display: block !important; width: 100%; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-        }
-        .stats-card { transition: transform 0.2s; }
-        .stats-card:hover { transform: translateY(-5px); }
-        .logo-img { width: 60px; height: 60px; object-fit: contain; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-CAPAI SKBT - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #ffffff; font-family: 'Inter', sans-serif; }
+        .bg-custom-yellow { background-color: #FFD700; }
+        .tab-active { border-bottom: 4px solid #FFD700; color: #000; font-weight: bold; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-area { display: block !important; width: 100%; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        }
+        .stats-card { transition: transform 0.2s; }
+        .stats-card:hover { transform: translateY(-5px); }
+        .logo-img { width: 60px; height: 60px; object-fit: contain; }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Header -->
-    <header class="bg-custom-yellow p-6 shadow-md no-print">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="bg-white p-1 rounded-full shadow-lg flex items-center justify-center overflow-hidden w-16 h-16">
-                    <!-- Logo Updated to logo.png -->
-                    <img src="logo.png" alt="Logo SKBT" class="logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=SKBT'">
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800 tracking-tight">e-CAPAI SKBT</h1>
-                    <p class="text-sm text-gray-700 font-medium italic">Sistem Rekod Pencapaian Sekolah & Guru</p>
-                </div>
-            </div>
-            <div class="mt-4 md:mt-0 flex space-x-2">
-                <button onclick="copyShareLink()" class="bg-white text-gray-800 px-4 py-2 rounded-lg shadow hover:bg-gray-100 flex items-center font-semibold text-sm transition-all active:scale-95">
-                    <i class="fas fa-share-alt mr-2"></i> KONGSI PAUTAN SEMAKAN
-                </button>
-            </div>
-        </div>
-    </header>
+    <!-- Header -->
+    <header class="bg-custom-yellow p-6 shadow-md no-print">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="bg-white p-1 rounded-full shadow-lg flex items-center justify-center overflow-hidden w-16 h-16">
+                    <!-- Logo Updated to logo.png -->
+                    <img src="logo.png" alt="Logo SKBT" class="logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=SKBT'">
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800 tracking-tight">e-CAPAI SKBT</h1>
+                    <p class="text-sm text-gray-700 font-medium italic">Sistem Rekod Pencapaian Sekolah & Guru</p>
+                </div>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-2">
+                <button onclick="copyShareLink()" class="bg-white text-gray-800 px-4 py-2 rounded-lg shadow hover:bg-gray-100 flex items-center font-semibold text-sm transition-all active:scale-95">
+                    <i class="fas fa-share-alt mr-2"></i> KONGSI PAUTAN SEMAKAN
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm sticky top-0 z-10 no-print">
-        <div class="container mx-auto flex overflow-x-auto border-b">
-            <button onclick="showTab('sekolah')" id="tab-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
-                <i class="fas fa-school mr-2"></i> SEKOLAH
-            </button>
-            <button onclick="showTab('individu')" id="tab-individu" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
-                <i class="fas fa-user mr-2"></i> INDIVIDU
-            </button>
-            <button onclick="showTab('rekod-sekolah')" id="tab-rekod-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
-                <i class="fas fa-list-ul mr-2"></i> REKOD SEKOLAH
-            </button>
-            <button onclick="showTab('rekod-guru')" id="tab-rekod-guru" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
-                <i class="fas fa-users-viewfinder mr-2"></i> REKOD GURU
-            </button>
-            <button onclick="showTab('analisis')" id="tab-analisis" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 text-blue-600 tab-active flex items-center">
-                <i class="fas fa-chart-pie mr-2"></i> ANALISIS PENCAPAIAN
-            </button>
-        </div>
-    </nav>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10 no-print">
+        <div class="container mx-auto flex overflow-x-auto border-b">
+            <button onclick="showTab('sekolah')" id="tab-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
+                <i class="fas fa-school mr-2"></i> SEKOLAH
+            </button>
+            <button onclick="showTab('individu')" id="tab-individu" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
+                <i class="fas fa-user mr-2"></i> INDIVIDU
+            </button>
+            <button onclick="showTab('rekod-sekolah')" id="tab-rekod-sekolah" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
+                <i class="fas fa-list-ul mr-2"></i> REKOD SEKOLAH
+            </button>
+            <button onclick="showTab('rekod-guru')" id="tab-rekod-guru" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 flex items-center">
+                <i class="fas fa-users-viewfinder mr-2"></i> REKOD GURU
+            </button>
+            <button onclick="showTab('analisis')" id="tab-analisis" class="px-6 py-4 whitespace-nowrap transition hover:bg-yellow-50 text-blue-600 tab-active flex items-center">
+                <i class="fas fa-chart-pie mr-2"></i> ANALISIS PENCAPAIAN
+            </button>
+        </div>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="container mx-auto p-4 md:p-8">
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-8">
 
-        <!-- BORANG SEKOLAH -->
-        <section id="content-sekolah" class="tab-content hidden">
-            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border-t-8 border-yellow-400 p-6 md:p-10">
-                <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
-                    <i class="fas fa-file-signature text-yellow-500 mr-3"></i> BORANG REKOD SEKOLAH
-                </h2>
-                <form id="formSekolah" onsubmit="saveData(event, 'sekolah')">
-                    <input type="hidden" id="edit-id-sekolah">
-                    <div class="grid grid-cols-1 gap-6">
-                        <div>
-                            <label class="block font-semibold mb-2">Peringkat (Sila Pilih)</label>
-                            <select id="peringkat-sekolah" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-                                <option value="">-- Pilih --</option>
-                                <option>DAERAH</option><option>NEGERI</option><option>KEBANGSAAN</option><option>ANTARABANGSA</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Program/Aktiviti/Pertandingan</label>
-                            <input type="text" id="program-sekolah" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Pautan Eviden Sekolah</label>
-                            <a href="https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing" target="_blank" class="text-blue-600 block bg-blue-50 p-3 rounded-lg border border-blue-100 mb-2 hover:bg-blue-100 transition">
-                                <i class="fab fa-google-drive mr-2"></i> Folder Google Drive Sekolah
-                            </a>
-                            <input type="url" id="eviden-sekolah" placeholder="Letak pautan spesifik jika ada" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Anjuran</label>
-                            <input type="text" id="anjuran-sekolah" required class="w-full p-3 border rounded-lg">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Kategori</label>
-                            <select id="kategori-sekolah" required class="w-full p-3 border rounded-lg">
-                                <option value="">-- Pilih --</option>
-                                <option>PERTANDINGAN</option><option>INOVASI</option><option>PENSIJILAN</option><option>ANUGERAH</option><option>PENGIKTIRAFAN</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Pencapaian</label>
-                            <select id="capai-sekolah" required class="w-full p-3 border rounded-lg">
-                                <option value="">-- Pilih --</option>
-                                <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD SEKOLAH</button>
-                    </div>
-                </form>
-            </div>
-        </section>
+        <!-- BORANG SEKOLAH -->
+        <section id="content-sekolah" class="tab-content hidden">
+            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border-t-8 border-yellow-400 p-6 md:p-10">
+                <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+                    <i class="fas fa-file-signature text-yellow-500 mr-3"></i> BORANG REKOD SEKOLAH
+                </h2>
+                <form id="formSekolah" onsubmit="saveData(event, 'sekolah')">
+                    <input type="hidden" id="edit-id-sekolah">
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label class="block font-semibold mb-2">Peringkat (Sila Pilih)</label>
+                            <select id="peringkat-sekolah" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+                                <option value="">-- Pilih --</option>
+                                <option>DAERAH</option><option>NEGERI</option><option>KEBANGSAAN</option><option>ANTARABANGSA</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Program/Aktiviti/Pertandingan</label>
+                            <input type="text" id="program-sekolah" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Pautan Eviden Sekolah</label>
+                            <a href="https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing" target="_blank" class="text-blue-600 block bg-blue-50 p-3 rounded-lg border border-blue-100 mb-2 hover:bg-blue-100 transition">
+                                <i class="fab fa-google-drive mr-2"></i> Folder Google Drive Sekolah
+                            </a>
+                            <input type="url" id="eviden-sekolah" placeholder="Letak pautan spesifik jika ada" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Anjuran</label>
+                            <input type="text" id="anjuran-sekolah" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Kategori</label>
+                            <select id="kategori-sekolah" required class="w-full p-3 border rounded-lg">
+                                <option value="">-- Pilih --</option>
+                                <option>PERTANDINGAN</option><option>INOVASI</option><option>PENSIJILAN</option><option>ANUGERAH</option><option>PENGIKTIRAFAN</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Pencapaian</label>
+                            <select id="capai-sekolah" required class="w-full p-3 border rounded-lg">
+                                <option value="">-- Pilih --</option>
+                                <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD SEKOLAH</button>
+                    </div>
+                </form>
+            </div>
+        </section>
 
-        <!-- BORANG INDIVIDU -->
-        <section id="content-individu" class="tab-content hidden">
-            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border-t-8 border-yellow-400 p-6 md:p-10">
-                <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
-                    <i class="fas fa-user-edit text-yellow-500 mr-3"></i> BORANG REKOD INDIVIDU
-                </h2>
-                <form id="formGuru" onsubmit="saveData(event, 'guru')">
-                    <input type="hidden" id="edit-id-guru">
-                    <div class="grid grid-cols-1 gap-6">
-                        <div>
-                            <label class="block font-semibold mb-2">Peringkat</label>
-                            <select id="peringkat-guru" required class="w-full p-3 border rounded-lg">
-                                <option value="">-- Pilih --</option>
-                                <option>DAERAH</option><option>NEGERI</option><option>KEBANGSAAN</option><option>ANTARABANGSA</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Program/Aktiviti/Pertandingan</label>
-                            <input type="text" id="program-guru" required class="w-full p-3 border rounded-lg">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Nama Guru</label>
-                            <select id="guruSelect" onchange="updateEvidenGuru()" required class="w-full p-3 border rounded-lg">
-                                <option value="">-- Pilih Nama Guru --</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing">ADLIN FAZLINDA BINTI ASNAN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing">DAYANG NORFARAHAIN FAEEZA BINTI HASSIM</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1Tpr_xlYxBtN6Dk1f2Qqet5EPgpeV3SpM?usp=sharing">KHAIRULAZMAN BIN DOLLAH</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1h3YNfdtdZqSfaTX84cV3XwsZvLVnG9Gl?usp=sharing">MAISARATUL SYABRINA IZZATI BINTI MUHAMAD SHUKRI</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1H2Jrtr0pc6qoDr1kq5hF0B36Kg5fMgq5?usp=sharing">MASTAHIR BIN MD. AMIN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1tdjXHx3bMNvbaMOTAXC2ehuhyRw3AKDJ?usp=sharing">NORMAZIDA BINTI AHMAD</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1FOPSizHpG-pKH_znLCRLExxPiHIGY-hl?usp=sharing">MAZUIN BINTI AHMAD KAMIL</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1dHNGPlD63lFpFWYkFeVCFzc79DSWJ2uU?usp=sharing">MOHD FAEIZ BIN SANUSI</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1bzoI2EL2tCxiEI5OhHXYgpx6cjj4fe-J?usp=sharing">MOHD FAIZAL BIN AHMAD</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1ui3OKAjSdvFbnY22AbtstRn3CaPaPaN7aZ?usp=sharing">NOHD HIJRAN BIN AHMAD IDRUS</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1Dkurl0f8iTU6RHISQPAxHnV7RxgTls33?usp=sharing">MOHD NOOR RASHID BIN WAGIMAN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1BZUcS4D2zQOfHwly50M1Zi7KZuOvhCjP?usp=sharing">MUZAFFAR AHMAD BIN ZAINAL ABIDIN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1NwNEcXKlvG8LEOgYDYkbgi97fnW-LpVL?usp=sharing">NOOR HASLINDA BINTI MOHD NASIRAN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1bA-vpVh6QO2b2qY1FPDvMtZ-gSX6QWFw?usp=sharing">NORAZLINAWATI BINTI MAHMOOD</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1Si-IaR5HTxZCqOYStLClNhYsxowuyAVL?usp=sharing">NORHIDAYAH BINTI MOHAMAD</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1T5orYpUtPvzPsxtALMH5zJmyF59C4wJN?usp=sharing">NORSAADAH BINTI JAILANI</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1k8e_orxreEMAv1fwakrZKtMf6WVTPG2H?usp=sharing">NORZAIMAH BINTI ZAKARIA</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1VQXZ6BYew8ttGymx_HkT_Mlu8DUigVI2?usp=sharing">NUR 'AMALIA BINTI HASAN ZAKI</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1NkZNWaoXpa9JSbECz_1_uUNXYU75GkZa?usp=sharing">NURUL NAJIHAH BINTI SAHLAN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1J7PNN2mZGiFiFdvGuw5qhGVbK6NqkPT7?usp=sharing">PSPA LAILA BINTI OTHMAN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1gt_wXG-iQKBnVhfyLupgPTTmumo10QL3?usp=sharing">RAZIDAH BINTI MOHAMED</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1RgFQAd8lAWEvmeoLLhQtsA6CKmvK5fXk?usp=sharing">ROSELINDA BINTI LAZIM</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1GNBPbCi917rY8l24f8v26iktI9Mb_ljx?usp=sharing">RUMINI BINTI TUKIMAN</option>
-                                <option data-drive="https://drive.google.com/drive/folders/16r6OLhCjeoskbxUVoYnuIclsTl0d7_B8?usp=sharing">SITI NOOR FAKHARIYAH BINTI MD. SHAHID</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1Xw3fYDXccj5MJHpAMeb7RTrCGrWnHiHO?usp=sharing">SHAHMINA WARDAH BINTI SUARDI</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1ehX5znqZvyMyjCBRO55MaVSdYaitKaHF?usp=sharing">VEETIYAH A/P SUROMUTHU</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1t5Tu4CA-0ivVS6VM_ugU0SUPkoOmytrK?usp=sharing">ZULKARNAIN BIN M. AYOB</option>
-                                <option data-drive="https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing">NOR AZAH BINTI MORI</option>
-                            </select>
-                        </div>
-                        <div id="pautanGuruWrapper" class="hidden">
-                            <label class="block font-semibold mb-2 text-sm text-gray-600"> Pautan Folder Guru Automatik</label>
-                            <a id="pautanGuruLink" href="#" target="_blank" class="text-blue-600 flex items-center bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4 hover:bg-blue-100 transition">
-                                <i class="fab fa-google-drive mr-2"></i> Buka Google Drive Guru
-                            </a>
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Anjuran</label>
-                            <input type="text" id="anjuran-guru" required class="w-full p-3 border rounded-lg">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Kategori</label>
-                            <select id="kategori-guru" required class="w-full p-3 border rounded-lg">
-                                <option value="">-- Pilih --</option>
-                                <option>PERTANDINGAN</option><option>INOVASI</option><option>PENSIJILAN</option><option>ANUGERAH</option><option>PENGIKTIRAFAN</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-2">Pencapaian</label>
-                            <select id="capai-guru" required class="w-full p-3 border rounded-lg">
-                                <option value="">-- Pilih --</option>
-                                <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD INDIVIDU</button>
-                    </div>
-                </form>
-            </div>
-        </section>
+        <!-- BORANG INDIVIDU -->
+        <section id="content-individu" class="tab-content hidden">
+            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg border-t-8 border-yellow-400 p-6 md:p-10">
+                <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+                    <i class="fas fa-user-edit text-yellow-500 mr-3"></i> BORANG REKOD INDIVIDU
+                </h2>
+                <form id="formGuru" onsubmit="saveData(event, 'guru')">
+                    <input type="hidden" id="edit-id-guru">
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label class="block font-semibold mb-2">Peringkat</label>
+                            <select id="peringkat-guru" required class="w-full p-3 border rounded-lg">
+                                <option value="">-- Pilih --</option>
+                                <option>DAERAH</option><option>NEGERI</option><option>KEBANGSAAN</option><option>ANTARABANGSA</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Program/Aktiviti/Pertandingan</label>
+                            <input type="text" id="program-guru" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Nama Guru</label>
+                            <select id="guruSelect" onchange="updateEvidenGuru()" required class="w-full p-3 border rounded-lg">
+                                <option value="">-- Pilih Nama Guru --</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing">ADLIN FAZLINDA BINTI ASNAN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing">DAYANG NORFARAHAIN FAEEZA BINTI HASSIM</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1Tpr_xlYxBtN6Dk1f2Qqet5EPgpeV3SpM?usp=sharing">KHAIRULAZMAN BIN DOLLAH</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1h3YNfdtdZqSfaTX84cV3XwsZvLVnG9Gl?usp=sharing">MAISARATUL SYABRINA IZZATI BINTI MUHAMAD SHUKRI</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1H2Jrtr0pc6qoDr1kq5hF0B36Kg5fMgq5?usp=sharing">MASTAHIR BIN MD. AMIN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1tdjXHx3bMNvbaMOTAXC2ehuhyRw3AKDJ?usp=sharing">NORMAZIDA BINTI AHMAD</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1FOPSizHpG-pKH_znLCRLExxPiHIGY-hl?usp=sharing">MAZUIN BINTI AHMAD KAMIL</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1dHNGPlD63lFpFWYkFeVCFzc79DSWJ2uU?usp=sharing">MOHD FAEIZ BIN SANUSI</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1bzoI2EL2tCxiEI5OhHXYgpx6cjj4fe-J?usp=sharing">MOHD FAIZAL BIN AHMAD</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1ui3OKAjSdvFbnY22AbtstRn3CaPaPaN7aZ?usp=sharing">NOHD HIJRAN BIN AHMAD IDRUS</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1Dkurl0f8iTU6RHISQPAxHnV7RxgTls33?usp=sharing">MOHD NOOR RASHID BIN WAGIMAN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1BZUcS4D2zQOfHwly50M1Zi7KZuOvhCjP?usp=sharing">MUZAFFAR AHMAD BIN ZAINAL ABIDIN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1NwNEcXKlvG8LEOgYDYkbgi97fnW-LpVL?usp=sharing">NOOR HASLINDA BINTI MOHD NASIRAN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1bA-vpVh6QO2b2qY1FPDvMtZ-gSX6QWFw?usp=sharing">NORAZLINAWATI BINTI MAHMOOD</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1Si-IaR5HTxZCqOYStLClNhYsxowuyAVL?usp=sharing">NORHIDAYAH BINTI MOHAMAD</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1T5orYpUtPvzPsxtALMH5zJmyF59C4wJN?usp=sharing">NORSAADAH BINTI JAILANI</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1k8e_orxreEMAv1fwakrZKtMf6WVTPG2H?usp=sharing">NORZAIMAH BINTI ZAKARIA</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1VQXZ6BYew8ttGymx_HkT_Mlu8DUigVI2?usp=sharing">NUR 'AMALIA BINTI HASAN ZAKI</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1NkZNWaoXpa9JSbECz_1_uUNXYU75GkZa?usp=sharing">NURUL NAJIHAH BINTI SAHLAN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1J7PNN2mZGiFiFdvGuw5qhGVbK6NqkPT7?usp=sharing">PSPA LAILA BINTI OTHMAN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1gt_wXG-iQKBnVhfyLupgPTTmumo10QL3?usp=sharing">RAZIDAH BINTI MOHAMED</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1RgFQAd8lAWEvmeoLLhQtsA6CKmvK5fXk?usp=sharing">ROSELINDA BINTI LAZIM</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1GNBPbCi917rY8l24f8v26iktI9Mb_ljx?usp=sharing">RUMINI BINTI TUKIMAN</option>
+                                <option data-drive="https://drive.google.com/drive/folders/16r6OLhCjeoskbxUVoYnuIclsTl0d7_B8?usp=sharing">SITI NOOR FAKHARIYAH BINTI MD. SHAHID</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1Xw3fYDXccj5MJHpAMeb7RTrCGrWnHiHO?usp=sharing">SHAHMINA WARDAH BINTI SUARDI</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1ehX5znqZvyMyjCBRO55MaVSdYaitKaHF?usp=sharing">VEETIYAH A/P SUROMUTHU</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1t5Tu4CA-0ivVS6VM_ugU0SUPkoOmytrK?usp=sharing">ZULKARNAIN BIN M. AYOB</option>
+                                <option data-drive="https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing">NOR AZAH BINTI MORI</option>
+                            </select>
+                        </div>
+                        <div id="pautanGuruWrapper" class="hidden">
+                            <label class="block font-semibold mb-2 text-sm text-gray-600"> Pautan Folder Guru Automatik</label>
+                            <a id="pautanGuruLink" href="#" target="_blank" class="text-blue-600 flex items-center bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4 hover:bg-blue-100 transition">
+                                <i class="fab fa-google-drive mr-2"></i> Buka Google Drive Guru
+                            </a>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Anjuran</label>
+                            <input type="text" id="anjuran-guru" required class="w-full p-3 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Kategori</label>
+                            <select id="kategori-guru" required class="w-full p-3 border rounded-lg">
+                                <option value="">-- Pilih --</option>
+                                <option>PERTANDINGAN</option><option>INOVASI</option><option>PENSIJILAN</option><option>ANUGERAH</option><option>PENGIKTIRAFAN</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2">Pencapaian</label>
+                            <select id="capai-guru" required class="w-full p-3 border rounded-lg">
+                                <option value="">-- Pilih --</option>
+                                <option>TEMPAT PERTAMA/ANUGERAH/PENGIKTIRAFAN</option><option>TEMPAT KEDUA</option><option>TEMPAT KETIGA</option><option>SAGUHATI</option><option>PENYERTAAN</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="bg-custom-yellow hover:bg-yellow-500 text-gray-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase">SIMPAN REKOD INDIVIDU</button>
+                    </div>
+                </form>
+            </div>
+        </section>
 
-        <!-- REKOD SEKOLAH -->
-        <section id="content-rekod-sekolah" class="tab-content hidden">
-            <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
-                    <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN SEKOLAH</h2>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
-                        <i class="fas fa-print mr-2"></i> Cetak Laporan
-                    </button>
-                </div>
-                <div class="print-area">
-                    <table class="w-full text-left border-collapse border border-gray-200">
-                        <thead>
-                            <tr class="bg-yellow-100 text-gray-800 font-bold">
-                                <th class="p-4 border">BIL</th>
-                                <th class="p-4 border">TARIKH</th>
-                                <th class="p-4 border">PERINGKAT</th>
-                                <th class="p-4 border">PROGRAM/AKTIVITI</th>
-                                <th class="p-4 border">ANJURAN</th>
-                                <th class="p-4 border">KATEGORI</th>
-                                <th class="p-4 border">PENCAPAIAN</th>
-                                <th class="p-4 border no-print text-center">TINDAKAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-sekolah-body" class="divide-y"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        <!-- REKOD SEKOLAH -->
+        <section id="content-rekod-sekolah" class="tab-content hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
+                    <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN SEKOLAH</h2>
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
+                        <i class="fas fa-print mr-2"></i> Cetak Laporan
+                    </button>
+                </div>
+                <div class="print-area">
+                    <table class="w-full text-left border-collapse border border-gray-200">
+                        <thead>
+                            <tr class="bg-yellow-100 text-gray-800 font-bold">
+                                <th class="p-4 border">BIL</th>
+                                <th class="p-4 border">TARIKH</th>
+                                <th class="p-4 border">PERINGKAT</th>
+                                <th class="p-4 border">PROGRAM/AKTIVITI</th>
+                                <th class="p-4 border">ANJURAN</th>
+                                <th class="p-4 border">KATEGORI</th>
+                                <th class="p-4 border">PENCAPAIAN</th>
+                                <th class="p-4 border no-print text-center">TINDAKAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-sekolah-body" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-        <!-- REKOD GURU -->
-        <section id="content-rekod-guru" class="tab-content hidden">
-            <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
-                    <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN GURU</h2>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
-                        <i class="fas fa-print mr-2"></i> Cetak Laporan
-                    </button>
-                </div>
-                <div class="print-area">
-                    <table class="w-full text-left border-collapse border border-gray-200">
-                        <thead>
-                            <tr class="bg-yellow-100 text-gray-800 font-bold">
-                                <th class="p-4 border">BIL</th>
-                                <th class="p-4 border">TARIKH</th>
-                                <th class="p-4 border">GURU</th>
-                                <th class="p-4 border">PERINGKAT</th>
-                                <th class="p-4 border">PROGRAM/AKTIVITI</th>
-                                <th class="p-4 border">ANJURAN</th>
-                                <th class="p-4 border">KATEGORI</th>
-                                <th class="p-4 border">PENCAPAIAN</th>
-                                <th class="p-4 border no-print text-center">TINDAKAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-guru-body" class="divide-y"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        <!-- REKOD GURU -->
+        <section id="content-rekod-guru" class="tab-content hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 no-print space-y-4 md:space-y-0">
+                    <h2 class="text-2xl font-bold text-gray-800">REKOD PENCAPAIAN GURU</h2>
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center hover:bg-black transition shadow">
+                        <i class="fas fa-print mr-2"></i> Cetak Laporan
+                    </button>
+                </div>
+                <div class="print-area">
+                    <table class="w-full text-left border-collapse border border-gray-200">
+                        <thead>
+                            <tr class="bg-yellow-100 text-gray-800 font-bold">
+                                <th class="p-4 border">BIL</th>
+                                <th class="p-4 border">TARIKH</th>
+                                <th class="p-4 border">GURU</th>
+                                <th class="p-4 border">PERINGKAT</th>
+                                <th class="p-4 border">PROGRAM/AKTIVITI</th>
+                                <th class="p-4 border">ANJURAN</th>
+                                <th class="p-4 border">KATEGORI</th>
+                                <th class="p-4 border">PENCAPAIAN</th>
+                                <th class="p-4 border no-print text-center">TINDAKAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-guru-body" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-        <!-- ANALISIS PENCAPAIAN -->
-        <section id="content-analisis" class="tab-content">
-            <div class="space-y-8">
-                <!-- Statistik Ringkas -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 no-print">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 stats-card">
-                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Antarabangsa</p>
-                        <h3 id="stat-antarabangsa" class="text-4xl font-black text-blue-600">0</h3>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500 stats-card">
-                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Kebangsaan</p>
-                        <h3 id="stat-kebangsaan" class="text-4xl font-black text-green-600">0</h3>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500 stats-card">
-                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Negeri</p>
-                        <h3 id="stat-negeri" class="text-4xl font-black text-yellow-600">0</h3>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-gray-500 stats-card">
-                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Daerah</p>
-                        <h3 id="stat-daerah" class="text-4xl font-black text-gray-600">0</h3>
-                    </div>
-                </div>
+        <!-- ANALISIS PENCAPAIAN -->
+        <section id="content-analisis" class="tab-content">
+            <div class="space-y-8">
+                <!-- Statistik Ringkas -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 no-print">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 stats-card">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Antarabangsa</p>
+                        <h3 id="stat-antarabangsa" class="text-4xl font-black text-blue-600">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500 stats-card">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Kebangsaan</p>
+                        <h3 id="stat-kebangsaan" class="text-4xl font-black text-green-600">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500 stats-card">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Negeri</p>
+                        <h3 id="stat-negeri" class="text-4xl font-black text-yellow-600">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-gray-500 stats-card">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Daerah</p>
+                        <h3 id="stat-daerah" class="text-4xl font-black text-gray-600">0</h3>
+                    </div>
+                </div>
 
-                <!-- Jadual Analisis Mengikut Guru -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center uppercase">
-                        <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
-                    </h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse border border-gray-100">
-                            <thead>
-                                <tr class="bg-gray-50 text-gray-700 font-bold">
-                                    <th class="p-4 border">NAMA GURU</th>
-                                    <th class="p-4 border text-center">BIL. PENCAPAIAN</th>
-                                    <th class="p-4 border">SENARAI PROGRAM & TAHAP</th>
-                                    <th class="p-4 border text-center">EVIDEN (DRIVE)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="analisis-guru-body" class="divide-y"></tbody>
-                        </table>
-                    </div>
-                </div>
+                <!-- Jadual Analisis Mengikut Guru -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center uppercase">
+                        <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse border border-gray-100">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-700 font-bold">
+                                    <th class="p-4 border">NAMA GURU</th>
+                                    <th class="p-4 border text-center">BIL. PENCAPAIAN</th>
+                                    <th class="p-4 border">SENARAI PROGRAM & TAHAP</th>
+                                    <th class="p-4 border text-center">EVIDEN (DRIVE)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analisis-guru-body" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
 
-                <!-- Footer Analisis -->
-                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 no-print">
-                    <h4 class="font-bold text-blue-800 mb-2 flex items-center">
-                        <i class="fas fa-info-circle mr-2"></i> Nota Semakan Analisis
-                    </h4>
-                    <p class="text-sm text-blue-700 leading-relaxed">Bahagian ini disediakan untuk tujuan pemantauan berkala. Semua pautan Google Drive di sini diselaraskan terus mengikut nama guru yang berdaftar dalam pangkalan data e-CAPAI SKBT.</p>
-                </div>
-            </div>
-        </section>
+                <!-- Footer Analisis -->
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 no-print">
+                    <h4 class="font-bold text-blue-800 mb-2 flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i> Nota Semakan Analisis
+                    </h4>
+                    <p class="text-sm text-blue-700 leading-relaxed">Bahagian ini disediakan untuk tujuan pemantauan berkala. Semua pautan Google Drive di sini diselaraskan terus mengikut nama guru yang berdaftar dalam pangkalan data e-CAPAI SKBT.</p>
+                </div>
+            </div>
+        </section>
 
-    </main>
+    </main>
 
-    <!-- Modal Preview -->
-    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl transition">&times;</button>
-            <h3 class="text-xl font-bold border-b pb-2 mb-4 flex items-center">
-                <i class="fas fa-eye mr-2 text-yellow-500"></i> Pratonton Rekod
-            </h3>
-            <div id="modalContent" class="space-y-4 text-gray-700"></div>
-            <div class="mt-8 flex justify-end">
-                <button onclick="closeModal()" class="bg-gray-200 hover:bg-gray-300 px-8 py-2 rounded-lg font-bold transition">Tutup</button>
-            </div>
-        </div>
-    </div>
+    <!-- Modal Preview -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl transition">&times;</button>
+            <h3 class="text-xl font-bold border-b pb-2 mb-4 flex items-center">
+                <i class="fas fa-eye mr-2 text-yellow-500"></i> Pratonton Rekod
+            </h3>
+            <div id="modalContent" class="space-y-4 text-gray-700"></div>
+            <div class="mt-8 flex justify-end">
+                <button onclick="closeModal()" class="bg-gray-200 hover:bg-gray-300 px-8 py-2 rounded-lg font-bold transition">Tutup</button>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        // Data Guru List
-        const MASTER_GURU_LIST = [
-            { name: "ADLIN FAZLINDA BINTI ASNAN", drive: "https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing" },
-            { name: "DAYANG NORFARAHAIN FAEEZA BINTI HASSIM", drive: "https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing" },
-            { name: "KHAIRULAZMAN BIN DOLLAH", drive: "https://drive.google.com/drive/folders/1Tpr_xlYxBtN6Dk1f2Qqet5EPgpeV3SpM?usp=sharing" },
-            { name: "MAISARATUL SYABRINA IZZATI BINTI MUHAMAD SHUKRI", drive: "https://drive.google.com/drive/folders/1h3YNfdtdZqSfaTX84cV3XwsZvLVnG9Gl?usp=sharing" },
-            { name: "MASTAHIR BIN MD. AMIN", drive: "https://drive.google.com/drive/folders/1H2Jrtr0pc6qoDr1kq5hF0B36Kg5fMgq5?usp=sharing" },
-            { name: "NORMAZIDA BINTI AHMAD", drive: "https://drive.google.com/drive/folders/1tdjXHx3bMNvbaMOTAXC2ehuhyRw3AKDJ?usp=sharing" },
-            { name: "MAZUIN BINTI AHMAD KAMIL", drive: "https://drive.google.com/drive/folders/1FOPSizHpG-pKH_znLCRLExxPiHIGY-hl?usp=sharing" },
-            { name: "MOHD FAEIZ BIN SANUSI", drive: "https://drive.google.com/drive/folders/1dHNGPlD63lFpFWYkFeVCFzc79DSWJ2uU?usp=sharing" },
-            { name: "MOHD FAIZAL BIN AHMAD", drive: "https://drive.google.com/drive/folders/1bzoI2EL2tCxiEI5OhHXYgpx6cjj4fe-J?usp=sharing" },
-            { name: "NOHD HIJRAN BIN AHMAD IDRUS", drive: "https://drive.google.com/drive/folders/1ui3OKAjSdvFbnY22AbtstRn3CaPaPaN7aZ?usp=sharing" },
-            { name: "MOHD NOOR RASHID BIN WAGIMAN", drive: "https://drive.google.com/drive/folders/1Dkurl0f8iTU6RHISQPAxHnV7RxgTls33?usp=sharing" },
-            { name: "MUZAFFAR AHMAD BIN ZAINAL ABIDIN", drive: "https://drive.google.com/drive/folders/1BZUcS4D2zQOfHwly50M1Zi7KZuOvhCjP?usp=sharing" },
-            { name: "NOOR HASLINDA BINTI MOHD NASIRAN", drive: "https://drive.google.com/drive/folders/1NwNEcXKlvG8LEOgYDYkbgi97fnW-LpVL?usp=sharing" },
-            { name: "NORAZLINAWATI BINTI MAHMOOD", drive: "https://drive.google.com/drive/folders/1bA-vpVh6QO2b2qY1FPDvMtZ-gSX6QWFw?usp=sharing" },
-            { name: "NORHIDAYAH BINTI MOHAMAD", drive: "https://drive.google.com/drive/folders/1Si-IaR5HTxZCqOYStLClNhYsxowuyAVL?usp=sharing" },
-            { name: "NORSAADAH BINTI JAILANI", drive: "https://drive.google.com/drive/folders/1T5orYpUtPvzPsxtALMH5zJmyF59C4wJN?usp=sharing" },
-            { name: "NORZAIMAH BINTI ZAKARIA", drive: "https://drive.google.com/drive/folders/1k8e_orxreEMAv1fwakrZKtMf6WVTPG2H?usp=sharing" },
-            { name: "NUR 'AMALIA BINTI HASAN ZAKI", drive: "https://drive.google.com/drive/folders/1VQXZ6BYew8ttGymx_HkT_Mlu8DUigVI2?usp=sharing" },
-            { name: "NURUL NAJIHAH BINTI SAHLAN", drive: "https://drive.google.com/drive/folders/1NkZNWaoXpa9JSbECz_1_uUNXYU75GkZa?usp=sharing" },
-            { name: "PSPA LAILA BINTI OTHMAN", drive: "https://drive.google.com/drive/folders/1J7PNN2mZGiFiFdvGuw5qhGVbK6NqkPT7?usp=sharing" },
-            { name: "RAZIDAH BINTI MOHAMED", drive: "https://drive.google.com/drive/folders/1gt_wXG-iQKBnVhfyLupgPTTmumo10QL3?usp=sharing" },
-            { name: "ROSELINDA BINTI LAZIM", drive: "https://drive.google.com/drive/folders/1RgFQAd8lAWEvmeoLLhQtsA6CKmvK5fXk?usp=sharing" },
-            { name: "RUMINI BINTI TUKIMAN", drive: "https://drive.google.com/drive/folders/1GNBPbCi917rY8l24f8v26iktI9Mb_ljx?usp=sharing" },
-            { name: "SITI NOOR FAKHARIYAH BINTI MD. SHAHID", drive: "https://drive.google.com/drive/folders/16r6OLhCjeoskbxUVoYnuIclsTl0d7_B8?usp=sharing" },
-            { name: "SHAHMINA WARDAH BINTI SUARDI", drive: "https://drive.google.com/drive/folders/1Xw3fYDXccj5MJHpAMeb7RTrCGrWnHiHO?usp=sharing" },
-            { name: "VEETIYAH A/P SUROMUTHU", drive: "https://drive.google.com/drive/folders/1ehX5znqZvyMyjCBRO55MaVSdYaitKaHF?usp=sharing" },
-            { name: "ZULKARNAIN BIN M. AYOB", drive: "https://drive.google.com/drive/folders/1t5Tu4CA-0ivVS6VM_ugU0SUPkoOmytrK?usp=sharing" },
-            { name: "NOR AZAH BINTI MORI", drive: "https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing" }
-        ];
+    <script>
+        // Data Guru List
+        const MASTER_GURU_LIST = [
+            { name: "ADLIN FAZLINDA BINTI ASNAN", drive: "https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing" },
+            { name: "DAYANG NORFARAHAIN FAEEZA BINTI HASSIM", drive: "https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing" },
+            { name: "KHAIRULAZMAN BIN DOLLAH", drive: "https://drive.google.com/drive/folders/1Tpr_xlYxBtN6Dk1f2Qqet5EPgpeV3SpM?usp=sharing" },
+            { name: "MAISARATUL SYABRINA IZZATI BINTI MUHAMAD SHUKRI", drive: "https://drive.google.com/drive/folders/1h3YNfdtdZqSfaTX84cV3XwsZvLVnG9Gl?usp=sharing" },
+            { name: "MASTAHIR BIN MD. AMIN", drive: "https://drive.google.com/drive/folders/1H2Jrtr0pc6qoDr1kq5hF0B36Kg5fMgq5?usp=sharing" },
+            { name: "NORMAZIDA BINTI AHMAD", drive: "https://drive.google.com/drive/folders/1tdjXHx3bMNvbaMOTAXC2ehuhyRw3AKDJ?usp=sharing" },
+            { name: "MAZUIN BINTI AHMAD KAMIL", drive: "https://drive.google.com/drive/folders/1FOPSizHpG-pKH_znLCRLExxPiHIGY-hl?usp=sharing" },
+            { name: "MOHD FAEIZ BIN SANUSI", drive: "https://drive.google.com/drive/folders/1dHNGPlD63lFpFWYkFeVCFzc79DSWJ2uU?usp=sharing" },
+            { name: "MOHD FAIZAL BIN AHMAD", drive: "https://drive.google.com/drive/folders/1bzoI2EL2tCxiEI5OhHXYgpx6cjj4fe-J?usp=sharing" },
+            { name: "NOHD HIJRAN BIN AHMAD IDRUS", drive: "https://drive.google.com/drive/folders/1ui3OKAjSdvFbnY22AbtstRn3CaPaPaN7aZ?usp=sharing" },
+            { name: "MOHD NOOR RASHID BIN WAGIMAN", drive: "https://drive.google.com/drive/folders/1Dkurl0f8iTU6RHISQPAxHnV7RxgTls33?usp=sharing" },
+            { name: "MUZAFFAR AHMAD BIN ZAINAL ABIDIN", drive: "https://drive.google.com/drive/folders/1BZUcS4D2zQOfHwly50M1Zi7KZuOvhCjP?usp=sharing" },
+            { name: "NOOR HASLINDA BINTI MOHD NASIRAN", drive: "https://drive.google.com/drive/folders/1NwNEcXKlvG8LEOgYDYkbgi97fnW-LpVL?usp=sharing" },
+            { name: "NORAZLINAWATI BINTI MAHMOOD", drive: "https://drive.google.com/drive/folders/1bA-vpVh6QO2b2qY1FPDvMtZ-gSX6QWFw?usp=sharing" },
+            { name: "NORHIDAYAH BINTI MOHAMAD", drive: "https://drive.google.com/drive/folders/1Si-IaR5HTxZCqOYStLClNhYsxowuyAVL?usp=sharing" },
+            { name: "NORSAADAH BINTI JAILANI", drive: "https://drive.google.com/drive/folders/1T5orYpUtPvzPsxtALMH5zJmyF59C4wJN?usp=sharing" },
+            { name: "NORZAIMAH BINTI ZAKARIA", drive: "https://drive.google.com/drive/folders/1k8e_orxreEMAv1fwakrZKtMf6WVTPG2H?usp=sharing" },
+            { name: "NUR 'AMALIA BINTI HASAN ZAKI", drive: "https://drive.google.com/drive/folders/1VQXZ6BYew8ttGymx_HkT_Mlu8DUigVI2?usp=sharing" },
+            { name: "NURUL NAJIHAH BINTI SAHLAN", drive: "https://drive.google.com/drive/folders/1NkZNWaoXpa9JSbECz_1_uUNXYU75GkZa?usp=sharing" },
+            { name: "PSPA LAILA BINTI OTHMAN", drive: "https://drive.google.com/drive/folders/1J7PNN2mZGiFiFdvGuw5qhGVbK6NqkPT7?usp=sharing" },
+            { name: "RAZIDAH BINTI MOHAMED", drive: "https://drive.google.com/drive/folders/1gt_wXG-iQKBnVhfyLupgPTTmumo10QL3?usp=sharing" },
+            { name: "ROSELINDA BINTI LAZIM", drive: "https://drive.google.com/drive/folders/1RgFQAd8lAWEvmeoLLhQtsA6CKmvK5fXk?usp=sharing" },
+            { name: "RUMINI BINTI TUKIMAN", drive: "https://drive.google.com/drive/folders/1GNBPbCi917rY8l24f8v26iktI9Mb_ljx?usp=sharing" },
+            { name: "SITI NOOR FAKHARIYAH BINTI MD. SHAHID", drive: "https://drive.google.com/drive/folders/16r6OLhCjeoskbxUVoYnuIclsTl0d7_B8?usp=sharing" },
+            { name: "SHAHMINA WARDAH BINTI SUARDI", drive: "https://drive.google.com/drive/folders/1Xw3fYDXccj5MJHpAMeb7RTrCGrWnHiHO?usp=sharing" },
+            { name: "VEETIYAH A/P SUROMUTHU", drive: "https://drive.google.com/drive/folders/1ehX5znqZvyMyjCBRO55MaVSdYaitKaHF?usp=sharing" },
+            { name: "ZULKARNAIN BIN M. AYOB", drive: "https://drive.google.com/drive/folders/1t5Tu4CA-0ivVS6VM_ugU0SUPkoOmytrK?usp=sharing" },
+            { name: "NOR AZAH BINTI MORI", drive: "https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing" }
+        ];
 
-        // Local Data Store
-        let db = {
-            sekolah: JSON.parse(localStorage.getItem('skbt_sekolah') || '[]'),
-            guru: JSON.parse(localStorage.getItem('skbt_guru') || '[]')
-        };
+        // Local Data Store
+        let db = {
+            sekolah: JSON.parse(localStorage.getItem('skbt_sekolah') || '[]'),
+            guru: JSON.parse(localStorage.getItem('skbt_guru') || '[]')
+        };
 
-        window.db = db;
-        
-        // Tab Logic
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
-            document.getElementById('content-' + tabId).classList.remove('hidden');
-            document.getElementById('tab-' + tabId).classList.add('tab-active');
-            
-            if(tabId.includes('rekod')) renderTables();
-            if(tabId === 'analisis') renderAnalisis();
-        }
+        window.db = db;
+        
+        // Tab Logic
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('tab-active');
+            
+            if(tabId.includes('rekod')) renderTables();
+            if(tabId === 'analisis') renderAnalisis();
+        }
 
-        // Copy Link
-        function copyShareLink() {
-            const dummy = document.createElement('input');
-            const text = window.location.href;
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            alert('Pautan Dashboard Berjaya Disalin!');
-        }
+        // Copy Link
+        function copyShareLink() {
+            const dummy = document.createElement('input');
+            const text = window.location.href;
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            alert('Pautan Dashboard Berjaya Disalin!');
+        }
 
-        // Update Guru Link in Form
-        function updateEvidenGuru() {
-            const select = document.getElementById('guruSelect');
-            const wrapper = document.getElementById('pautanGuruWrapper');
-            const link = document.getElementById('pautanGuruLink');
-            const selectedOption = select.options[select.selectedIndex];
-            
-            if (select.value) {
-                const driveUrl = selectedOption.getAttribute('data-drive');
-                link.href = driveUrl;
-                wrapper.classList.remove('hidden');
-            } else {
-                wrapper.classList.add('hidden');
-            }
-        }
+        // Update Guru Link in Form
+        function updateEvidenGuru() {
+            const select = document.getElementById('guruSelect');
+            const wrapper = document.getElementById('pautanGuruWrapper');
+            const link = document.getElementById('pautanGuruLink');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (select.value) {
+                const driveUrl = selectedOption.getAttribute('data-drive');
+                link.href = driveUrl;
+                wrapper.classList.remove('hidden');
+            } else {
+                wrapper.classList.add('hidden');
+            }
+        }
 
-        // Save Data Logic
-        function saveData(event, type) {
-            event.preventDefault();
-            const date = new Date().toLocaleDateString('ms-MY');
-            const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
-            
-            let entry = { id: id, tarikh: date };
+        // Save Data Logic
+        function saveData(event, type) {
+            event.preventDefault();
+            const date = new Date().toLocaleDateString('ms-MY');
+            const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
+            
+            let entry = { id: id, tarikh: date };
 
-            if(type === 'sekolah') {
-                entry.peringkat = document.getElementById('peringkat-sekolah').value;
-                entry.program = document.getElementById('program-sekolah').value;
-                entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing';
-                entry.anjuran = document.getElementById('anjuran-sekolah').value;
-                entry.kategori = document.getElementById('kategori-sekolah').value;
-                entry.pencapaian = document.getElementById('capai-sekolah').value;
-            } else {
-                const gSelect = document.getElementById('guruSelect');
-                entry.guru = gSelect.options[gSelect.selectedIndex].text;
-                entry.peringkat = document.getElementById('peringkat-guru').value;
-                entry.program = document.getElementById('program-guru').value;
-                entry.anjuran = doc
+            if(type === 'sekolah') {
+                entry.peringkat = document.getElementById('peringkat-sekolah').value;
+                entry.program = document.getElementById('program-sekolah').value;
+                entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing';
+                entry.anjuran = document.getElementById('anjuran-sekolah').value;
+                entry.kategori = document.getElementById('kategori-sekolah').value;
+                entry.pencapaian = document.getElementById('capai-sekolah').value;
+            } else {
+                const gSelect = document.getElementById('guruSelect');
+                entry.guru = gSelect.options[gSelect.selectedIndex].text;
+                entry.peringkat = document.getElementById('peringkat-guru').value;
+                entry.program = document.getElementById('program-guru').value;
+                entry.anjuran = document.getElementById('anjuran-guru').value;
+                entry.kategori = document.getElementById('kategori-guru').value;
+                entry.pencapaian = document.getElementById('capai-guru').value;
+                entry.eviden = gSelect.options[gSelect.selectedIndex].getAttribute('data-drive');
+            }
+
+            const existingIndex = db[type].findIndex(item => item.id === id);
+            if(existingIndex > -1) {
+                db[type][existingIndex] = entry;
+            } else {
+                db[type].push(entry);
+            }
+
+            localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
+            alert('Rekod Berjaya Disimpan!');
+            event.target.reset();
+            document.getElementById(`edit-id-${type}`).value = '';
+            if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
+            showTab(`rekod-${type}`);
+        }
+
+        // Render Tables
+        function renderTables() {
+            ['sekolah', 'guru'].forEach(type => {
+                const tbody = document.getElementById(`table-${type}-body`);
+                tbody.innerHTML = '';
+                db[type].forEach((item, index) => {
+                    const row = `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-4 border text-center">${index + 1}</td>
+                            <td class="p-4 border text-xs">${item.tarikh}</td>
+                            ${type === 'guru' ? `<td class="p-4 border font-bold text-xs">${item.guru}</td>` : ''}
+                            <td class="p-4 border text-xs"><span class="px-2 py-1 bg-yellow-100 rounded text-yellow-800 font-bold">${item.peringkat}</span></td>
+                            <td class="p-4 border font-medium text-xs">${item.program}</td>
+                            <td class="p-4 border text-xs">${item.anjuran}</td>
+                            <td class="p-4 border text-xs">${item.kategori}</td>
+                            <td class="p-4 border font-bold text-blue-700 text-xs">${item.pencapaian}</td>
+                            <td class="p-4 border no-print text-center">
+                                <div class="flex justify-center space-x-2">
+                                    <a href="${item.eviden}" target="_blank" class="text-blue-500 hover:text-blue-700" title="Buka Eviden"><i class="fas fa-external-link-alt"></i></a>
+                                    <button onclick="editItem('${type}', '${item.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteItem('${type}', '${item.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            });
+        }
+
+        // Render Analisis
+        function renderAnalisis() {
+            const stats = { antarabangsa: 0, kebangsaan: 0, negeri: 0, daerah: 0 };
+            const combined = [...db.sekolah, ...db.guru];
+            
+            combined.forEach(item => {
+                const p = item.peringkat.toLowerCase();
+                if(stats[p] !== undefined) stats[p]++;
+            });
+
+            document.getElementById('stat-antarabangsa').innerText = stats.antarabangsa;
+            document.getElementById('stat-kebangsaan').innerText = stats.kebangsaan;
+            document.getElementById('stat-negeri').innerText = stats.negeri;
+            document.getElementById('stat-daerah').innerText = stats.daerah;
+
+            const tbody = document.getElementById('analisis-guru-body');
+            tbody.innerHTML = '';
+            
+            MASTER_GURU_LIST.forEach(guru => {
+                const records = db.guru.filter(r => r.guru === guru.name);
+                const count = records.length;
+                const list = records.map(r => `<div class="mb-1 text-xs">• ${r.program} (${r.peringkat})</div>`).join('') || '<span class="text-gray-400 text-xs">Tiada Rekod</span>';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-4 border font-medium text-xs">${guru.name}</td>
+                        <td class="p-4 border text-center font-bold text-lg">${count}</td>
+                        <td class="p-4 border">${list}</td>
+                        <td class="p-4 border text-center">
+                            <a href="${guru.drive}" target="_blank" class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 text-xs hover:bg-blue-100">
+                                <i class="fab fa-google-drive mr-1"></i> Buka Folder
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Delete Logic
+        function deleteItem(type, id) {
+            if(confirm('Adakah anda pasti mahu memadam rekod ini?')) {
+                db[type] = db[type].filter(item => item.id !== id);
+                localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
+                renderTables();
+                if(document.getElementById('content-analisis').style.display !== 'none') renderAnalisis();
+            }
+        }
+
+        // Edit Logic
+        function editItem(type, id) {
+            const item = db[type].find(i => i.id === id);
+            if(!item) return;
+
+            showTab(type === 'sekolah' ? 'sekolah' : 'individu');
+            document.getElementById(`edit-id-${type}`).value = item.id;
+
+            if(type === 'sekolah') {
+                document.getElementById('peringkat-sekolah').value = item.peringkat;
+                document.getElementById('program-sekolah').value = item.program;
+                document.getElementById('eviden-sekolah').value = item.eviden;
+                document.getElementById('anjuran-sekolah').value = item.anjuran;
+                document.getElementById('kategori-sekolah').value = item.kategori;
+                document.getElementById('capai-sekolah').value = item.pencapaian;
+            } else {
+                const gSelect = document.getElementById('guruSelect');
+                for(let i=0; i<gSelect.options.length; i++){
+                    if(gSelect.options[i].text === item.guru) {
+                        gSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+                updateEvidenGuru();
+                document.getElementById('peringkat-guru').value = item.peringkat;
+                document.getElementById('program-guru').value = item.program;
+                document.getElementById('anjuran-guru').value = item.anjuran;
+                document.getElementById('kategori-guru').value = item.kategori;
+                document.getElementById('capai-guru').value = item.pencapaian;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // Init
+        window.onload = () => {
+            renderTables();
+            renderAnalisis();
+        };
+    </script>
+</body>
+</html>
