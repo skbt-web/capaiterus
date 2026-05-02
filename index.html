@@ -28,8 +28,8 @@
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="bg-white p-1 rounded-full shadow-lg flex items-center justify-center overflow-hidden w-16 h-16">
-                    <!-- Memasukkan Logo dari GitHub (Raw URL) -->
-                    <img src="https://raw.githubusercontent.com/skbt-it/e-capai/main/logo.png" alt="Logo SKBT" class="logo-img" onerror="this.onerror=null; this.innerHTML='<i class=\'fas fa-graduation-cap text-3xl text-yellow-600\'></i>'; this.src='https://via.placeholder.com/60?text=SKBT'">
+                    <!-- Logo Updated to logo.png -->
+                    <img src="logo.png" alt="Logo SKBT" class="logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/60?text=SKBT'">
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800 tracking-tight">e-CAPAI SKBT</h1>
@@ -411,7 +411,7 @@
             }
         }
 
-        // Save Data
+        // Save Data Logic
         function saveData(event, type) {
             event.preventDefault();
             const date = new Date().toLocaleDateString('ms-MY');
@@ -429,16 +429,16 @@
             } else {
                 const gSelect = document.getElementById('guruSelect');
                 entry.guru = gSelect.options[gSelect.selectedIndex].text;
-                entry.eviden = gSelect.options[gSelect.selectedIndex].getAttribute('data-drive');
                 entry.peringkat = document.getElementById('peringkat-guru').value;
                 entry.program = document.getElementById('program-guru').value;
                 entry.anjuran = document.getElementById('anjuran-guru').value;
                 entry.kategori = document.getElementById('kategori-guru').value;
                 entry.pencapaian = document.getElementById('capai-guru').value;
+                entry.eviden = gSelect.options[gSelect.selectedIndex].getAttribute('data-drive');
             }
-         
-            const existingIndex = db[type].findIndex(item => item.id == id);
-            if (existingIndex > -1) {
+
+            const existingIndex = db[type].findIndex(item => item.id === id);
+            if(existingIndex > -1) {
                 db[type][existingIndex] = entry;
             } else {
                 db[type].push(entry);
@@ -447,63 +447,97 @@
             localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
             alert('Rekod Berjaya Disimpan!');
             event.target.reset();
-            document.getElementById(`edit-id-${type}`).value = "";
+            document.getElementById(`edit-id-${type}`).value = '';
+            if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
             showTab(`rekod-${type}`);
         }
 
+        // Render Tables
         function renderTables() {
-            // Render Sekolah
-            const sBody = document.getElementById('table-sekolah-body');
-            sBody.innerHTML = db.sekolah.map((item, index) => `
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="p-4 border text-center font-bold">${index + 1}</td>
-                    <td class="p-4 border text-sm">${item.tarikh}</td>
-                    <td class="p-4 border font-semibold text-blue-700">${item.peringkat}</td>
-                    <td class="p-4 border font-medium">${item.program}</td>
-                    <td class="p-4 border text-sm">${item.anjuran}</td>
-                    <td class="p-4 border text-xs"><span class="bg-gray-200 px-2 py-1 rounded">${item.kategori}</span></td>
-                    <td class="p-4 border font-bold text-green-700">${item.pencapaian}</td>
-                    <td class="p-4 border no-print text-center flex justify-center space-x-2">
-                        <button onclick="editItem('sekolah', '${item.id}')" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition shadow-sm"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteItem('sekolah', '${item.id}')" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition shadow-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-
-            // Render Guru
-            const gBody = document.getElementById('table-guru-body');
-            gBody.innerHTML = db.guru.map((item, index) => `
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="p-4 border text-center font-bold">${index + 1}</td>
-                    <td class="p-4 border text-sm">${item.tarikh}</td>
-                    <td class="p-4 border font-bold text-gray-800">${item.guru}</td>
-                    <td class="p-4 border font-semibold text-blue-700">${item.peringkat}</td>
-                    <td class="p-4 border font-medium">${item.program}</td>
-                    <td class="p-4 border text-sm">${item.anjuran}</td>
-                    <td class="p-4 border text-xs"><span class="bg-gray-200 px-2 py-1 rounded">${item.kategori}</span></td>
-                    <td class="p-4 border font-bold text-green-700">${item.pencapaian}</td>
-                    <td class="p-4 border no-print text-center flex justify-center space-x-2">
-                        <button onclick="editItem('guru', '${item.id}')" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition shadow-sm"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteItem('guru', '${item.id}')" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition shadow-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+            ['sekolah', 'guru'].forEach(type => {
+                const tbody = document.getElementById(`table-${type}-body`);
+                tbody.innerHTML = '';
+                db[type].forEach((item, index) => {
+                    const row = `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-4 border text-center">${index + 1}</td>
+                            <td class="p-4 border text-xs">${item.tarikh}</td>
+                            ${type === 'guru' ? `<td class="p-4 border font-bold text-xs">${item.guru}</td>` : ''}
+                            <td class="p-4 border text-xs"><span class="px-2 py-1 bg-yellow-100 rounded text-yellow-800 font-bold">${item.peringkat}</span></td>
+                            <td class="p-4 border font-medium text-xs">${item.program}</td>
+                            <td class="p-4 border text-xs">${item.anjuran}</td>
+                            <td class="p-4 border text-xs">${item.kategori}</td>
+                            <td class="p-4 border font-bold text-blue-700 text-xs">${item.pencapaian}</td>
+                            <td class="p-4 border no-print text-center">
+                                <div class="flex justify-center space-x-2">
+                                    <a href="${item.eviden}" target="_blank" class="text-blue-500 hover:text-blue-700" title="Buka Eviden"><i class="fas fa-external-link-alt"></i></a>
+                                    <button onclick="editItem('${type}', '${item.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteItem('${type}', '${item.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            });
         }
 
+        // Render Analisis
+        function renderAnalisis() {
+            const stats = { antarabangsa: 0, kebangsaan: 0, negeri: 0, daerah: 0 };
+            const combined = [...db.sekolah, ...db.guru];
+            
+            combined.forEach(item => {
+                const p = item.peringkat.toLowerCase();
+                if(stats[p] !== undefined) stats[p]++;
+            });
+
+            document.getElementById('stat-antarabangsa').innerText = stats.antarabangsa;
+            document.getElementById('stat-kebangsaan').innerText = stats.kebangsaan;
+            document.getElementById('stat-negeri').innerText = stats.negeri;
+            document.getElementById('stat-daerah').innerText = stats.daerah;
+
+            const tbody = document.getElementById('analisis-guru-body');
+            tbody.innerHTML = '';
+            
+            MASTER_GURU_LIST.forEach(guru => {
+                const records = db.guru.filter(r => r.guru === guru.name);
+                const count = records.length;
+                const list = records.map(r => `<div class="mb-1 text-xs">• ${r.program} (${r.peringkat})</div>`).join('') || '<span class="text-gray-400 text-xs">Tiada Rekod</span>';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-4 border font-medium text-xs">${guru.name}</td>
+                        <td class="p-4 border text-center font-bold text-lg">${count}</td>
+                        <td class="p-4 border">${list}</td>
+                        <td class="p-4 border text-center">
+                            <a href="${guru.drive}" target="_blank" class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 text-xs hover:bg-blue-100">
+                                <i class="fab fa-google-drive mr-1"></i> Buka Folder
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Delete Logic
         function deleteItem(type, id) {
-            if(confirm('Padam rekod ini?')) {
-                db[type] = db[type].filter(item => item.id != id);
+            if(confirm('Adakah anda pasti mahu memadam rekod ini?')) {
+                db[type] = db[type].filter(item => item.id !== id);
                 localStorage.setItem(`skbt_${type}`, JSON.stringify(db[type]));
                 renderTables();
-                renderAnalisis();
+                if(document.getElementById('content-analisis').style.display !== 'none') renderAnalisis();
             }
         }
 
+        // Edit Logic
         function editItem(type, id) {
-            const item = db[type].find(i => i.id == id);
-            showTab(type);
-            document.getElementById(`edit-id-${type}`).value = id;
-            
+            const item = db[type].find(i => i.id === id);
+            if(!item) return;
+
+            showTab(type === 'sekolah' ? 'sekolah' : 'individu');
+            document.getElementById(`edit-id-${type}`).value = item.id;
+
             if(type === 'sekolah') {
                 document.getElementById('peringkat-sekolah').value = item.peringkat;
                 document.getElementById('program-sekolah').value = item.program;
@@ -512,63 +546,30 @@
                 document.getElementById('kategori-sekolah').value = item.kategori;
                 document.getElementById('capai-sekolah').value = item.pencapaian;
             } else {
+                const gSelect = document.getElementById('guruSelect');
+                for(let i=0; i<gSelect.options.length; i++){
+                    if(gSelect.options[i].text === item.guru) {
+                        gSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+                updateEvidenGuru();
                 document.getElementById('peringkat-guru').value = item.peringkat;
                 document.getElementById('program-guru').value = item.program;
                 document.getElementById('anjuran-guru').value = item.anjuran;
                 document.getElementById('kategori-guru').value = item.kategori;
                 document.getElementById('capai-guru').value = item.pencapaian;
-                // Pilih guru dalam dropdown
-                const select = document.getElementById('guruSelect');
-                for(let opt of select.options) {
-                    if(opt.text === item.guru) opt.selected = true;
-                }
-                updateEvidenGuru();
             }
-        }
-
-        function renderAnalisis() {
-            // Count Stats
-            const combined = [...db.sekolah, ...db.guru];
-            const counts = { 'ANTARABANGSA': 0, 'KEBANGSAAN': 0, 'NEGERI': 0, 'DAERAH': 0 };
-            combined.forEach(item => { if(counts[item.peringkat] !== undefined) counts[item.peringkat]++; });
-
-            document.getElementById('stat-antarabangsa').innerText = counts['ANTARABANGSA'];
-            document.getElementById('stat-kebangsaan').innerText = counts['KEBANGSAAN'];
-            document.getElementById('stat-negeri').innerText = counts['NEGERI'];
-            document.getElementById('stat-daerah').innerText = counts['DAERAH'];
-
-            // Master Table Analysis
-            const aBody = document.getElementById('analisis-guru-body');
-            aBody.innerHTML = MASTER_GURU_LIST.map(master => {
-                const pencapaianGuru = db.guru.filter(g => g.guru === master.name);
-                const listProgram = pencapaianGuru.length > 0 
-                    ? pencapaianGuru.map(p => `• ${p.program} (${p.peringkat})`).join('<br>')
-                    : '<span class="text-gray-400 italic">Tiada rekod dikesan</span>';
-                
-                return `
-                    <tr class="${pencapaianGuru.length > 0 ? 'bg-blue-50' : ''}">
-                        <td class="p-4 border font-bold">${master.name}</td>
-                        <td class="p-4 border text-center">
-                            <span class="px-3 py-1 rounded-full ${pencapaianGuru.length > 0 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'} font-bold">
-                                ${pencapaianGuru.length}
-                            </span>
-                        </td>
-                        <td class="p-4 border text-sm">${listProgram}</td>
-                        <td class="p-4 border text-center">
-                            <a href="${master.drive}" target="_blank" class="text-blue-500 hover:text-blue-700 text-xl"><i class="fab fa-google-drive"></i></a>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
         }
 
         function closeModal() {
             document.getElementById('previewModal').classList.add('hidden');
         }
 
-        // Initialize App
+        // Init
         window.onload = () => {
-            showTab('analisis'); // Default Tab
+            renderTables();
+            renderAnalisis();
         };
     </script>
 </body>
