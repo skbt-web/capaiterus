@@ -23,11 +23,13 @@
             th, td { border: 1px solid #000 !important; padding: 6px !important; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; }
             @page { size: landscape; margin: 1cm; }
+            .print-title { display: block !important; text-align: center; margin-bottom: 20px; font-size: 16pt; font-weight: bold; text-transform: uppercase; }
         }
 
         .stats-card { transition: transform 0.2s; }
         .stats-card:hover { transform: translateY(-5px); }
         .logo-img { width: 60px; height: 60px; object-fit: contain; }
+        .print-title { display: none; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -220,6 +222,7 @@
                     </button>
                 </div>
                 <div class="print-area">
+                    <h1 class="print-title">REKOD PENCAPAIAN SEKOLAH</h1>
                     <table class="w-full text-left border-collapse border border-gray-200">
                         <thead>
                             <tr class="bg-yellow-100 text-gray-800 font-bold">
@@ -249,6 +252,7 @@
                     </button>
                 </div>
                 <div class="print-area">
+                    <h1 class="print-title">REKOD PENCAPAIAN GURU</h1>
                     <table class="w-full text-left border-collapse border border-gray-200">
                         <thead>
                             <tr class="bg-yellow-100 text-gray-800 font-bold">
@@ -293,7 +297,7 @@
 
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
-                        <h2 class="text-xl font-bold text-gray-800 flex items-center uppercase">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center uppercase no-print">
                             <i class="fas fa-table text-blue-500 mr-2"></i> ANALISIS INDUK PENCAPAIAN GURU
                         </h2>
                         <button onclick="window.print()" class="no-print bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center hover:bg-blue-700 transition shadow">
@@ -301,6 +305,7 @@
                         </button>
                     </div>
                     <div class="overflow-x-auto printable-table">
+                        <h1 class="print-title">REKOD ANALISIS PENCAPAIAN GURU</h1>
                         <table class="w-full text-left border-collapse border border-gray-100">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-700 font-bold">
