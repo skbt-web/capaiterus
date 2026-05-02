@@ -331,157 +331,193 @@
         </div>
     </div>
 
-    <script>
-        // Data Guru List
-        const MASTER_GURU_LIST = [
-            { name: "ADLIN FAZLINDA BINTI ASNAN", drive: "https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing" },
-            { name: "DAYANG NORFARAHAIN FAEEZA BINTI HASSIM", drive: "https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing" },
-            { name: "KHAIRULAZMAN BIN DOLLAH", drive: "https://drive.google.com/drive/folders/1Tpr_xlYxBtN6Dk1f2Qqet5EPgpeV3SpM?usp=sharing" },
-            { name: "MAISARATUL SYABRINA IZZATI BINTI MUHAMAD SHUKRI", drive: "https://drive.google.com/drive/folders/1h3YNfdtdZqSfaTX84cV3XwsZvLVnG9Gl?usp=sharing" },
-            { name: "MASTAHIR BIN MD. AMIN", drive: "https://drive.google.com/drive/folders/1H2Jrtr0pc6qoDr1kq5hF0B36Kg5fMgq5?usp=sharing" },
-            { name: "NORMAZIDA BINTI AHMAD", drive: "https://drive.google.com/drive/folders/1tdjXHx3bMNvbaMOTAXC2ehuhyRw3AKDJ?usp=sharing" },
-            { name: "MAZUIN BINTI AHMAD KAMIL", drive: "https://drive.google.com/drive/folders/1FOPSizHpG-pKH_znLCRLExxPiHIGY-hl?usp=sharing" },
-            { name: "MOHD FAEIZ BIN SANUSI", drive: "https://drive.google.com/drive/folders/1dHNGPlD63lFpFWYkFeVCFzc79DSWJ2uU?usp=sharing" },
-            { name: "MOHD FAIZAL BIN AHMAD", drive: "https://drive.google.com/drive/folders/1bzoI2EL2tCxiEI5OhHXYgpx6cjj4fe-J?usp=sharing" },
-            { name: "NOHD HIJRAN BIN AHMAD IDRUS", drive: "https://drive.google.com/drive/folders/1ui3OKAjSdvFbnY22AbtstRn3CaPaPaN7aZ?usp=sharing" },
-            { name: "MOHD NOOR RASHID BIN WAGIMAN", drive: "https://drive.google.com/drive/folders/1Dkurl0f8iTU6RHISQPAxHnV7RxgTls33?usp=sharing" },
-            { name: "MUZAFFAR AHMAD BIN ZAINAL ABIDIN", drive: "https://drive.google.com/drive/folders/1BZUcS4D2zQOfHwly50M1Zi7KZuOvhCjP?usp=sharing" },
-            { name: "NOOR HASLINDA BINTI MOHD NASIRAN", drive: "https://drive.google.com/drive/folders/1NwNEcXKlvG8LEOgYDYkbgi97fnW-LpVL?usp=sharing" },
-            { name: "NORAZLINAWATI BINTI MAHMOOD", drive: "https://drive.google.com/drive/folders/1bA-vpVh6QO2b2qY1FPDvMtZ-gSX6QWFw?usp=sharing" },
-            { name: "NORHIDAYAH BINTI MOHAMAD", drive: "https://drive.google.com/drive/folders/1Si-IaR5HTxZCqOYStLClNhYsxowuyAVL?usp=sharing" },
-            { name: "NORSAADAH BINTI JAILANI", drive: "https://drive.google.com/drive/folders/1T5orYpUtPvzPsxtALMH5zJmyF59C4wJN?usp=sharing" },
-            { name: "NORZAIMAH BINTI ZAKARIA", drive: "https://drive.google.com/drive/folders/1k8e_orxreEMAv1fwakrZKtMf6WVTPG2H?usp=sharing" },
-            { name: "NUR 'AMALIA BINTI HASAN ZAKI", drive: "https://drive.google.com/drive/folders/1VQXZ6BYew8ttGymx_HkT_Mlu8DUigVI2?usp=sharing" },
-            { name: "NURUL NAJIHAH BINTI SAHLAN", drive: "https://drive.google.com/drive/folders/1NkZNWaoXpa9JSbECz_1_uUNXYU75GkZa?usp=sharing" },
-            { name: "PSPA LAILA BINTI OTHMAN", drive: "https://drive.google.com/drive/folders/1J7PNN2mZGiFiFdvGuw5qhGVbK6NqkPT7?usp=sharing" },
-            { name: "RAZIDAH BINTI MOHAMED", drive: "https://drive.google.com/drive/folders/1gt_wXG-iQKBnVhfyLupgPTTmumo10QL3?usp=sharing" },
-            { name: "ROSELINDA BINTI LAZIM", drive: "https://drive.google.com/drive/folders/1RgFQAd8lAWEvmeoLLhQtsA6CKmvK5fXk?usp=sharing" },
-            { name: "RUMINI BINTI TUKIMAN", drive: "https://drive.google.com/drive/folders/1GNBPbCi917rY8l24f8v26iktI9Mb_ljx?usp=sharing" },
-            { name: "SITI NOOR FAKHARIYAH BINTI MD. SHAHID", drive: "https://drive.google.com/drive/folders/16r6OLhCjeoskbxUVoYnuIclsTl0d7_B8?usp=sharing" },
-            { name: "SHAHMINA WARDAH BINTI SUARDI", drive: "https://drive.google.com/drive/folders/1Xw3fYDXccj5MJHpAMeb7RTrCGrWnHiHO?usp=sharing" },
-            { name: "VEETIYAH A/P SUROMUTHU", drive: "https://drive.google.com/drive/folders/1ehX5znqZvyMyjCBRO55MaVSdYaitKaHF?usp=sharing" },
-            { name: "ZULKARNAIN BIN M. AYOB", drive: "https://drive.google.com/drive/folders/1t5Tu4CA-0ivVS6VM_ugU0SUPkoOmytrK?usp=sharing" },
-            { name: "NOR AZAH BINTI MORI", drive: "https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing" }
-        ];
+   <script type="module">
+    // 1. IMPORT FIREBASE SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-       // --- KEKALKAN MASTER_GURU_LIST ANDA DI ATAS ---
+    // 2. KONFIGURASI FIREBASE (KEKAL ASAL)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
+        authDomain: "ecapaiskbt.firebaseapp.com",
+        projectId: "ecapaiskbt",
+        storageBucket: "ecapaiskbt.firebasestorage.app",
+        messagingSenderId: "328855405603",
+        appId: "1:328855405603:web:32c5e193845b237e065d96",
+        measurementId: "G-S0YNK1PNR4"
+    };
 
-// 1. IMPORT FIREBASE (Guna cara Dynamic Import supaya tidak kacau fungsi lain)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
-    authDomain: "ecapaiskbt.firebaseapp.com",
-    projectId: "ecapaiskbt",
-    storageBucket: "ecapaiskbt.firebasestorage.app",
-    messagingSenderId: "328855405603",
-    appId: "1:328855405603:web:32c5e193845b237e065d96",
-    measurementId: "G-S0YNK1PNR4"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// 2. FUNGSI TAB (KEKAL ASAL)
-window.showTab = function(tabId) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
-    document.getElementById('content-' + tabId).classList.remove('hidden');
-    document.getElementById('tab-' + tabId).classList.add('tab-active');
-    
-    if(tabId.includes('rekod')) renderTables();
-    if(tabId === 'analisis') renderAnalisis();
-}
-
-// 3. FUNGSI SIMPAN (DIKEMASKINI KE FIRESTORE)
-window.saveData = async function(event, type) {
-    event.preventDefault();
-    const btn = event.submitter;
-    btn.innerText = "SIMPAN...";
-    btn.disabled = true;
-
-    try {
-        let entry = {
-            tarikh: new Date().toLocaleDateString('ms-MY'),
-            createdAt: serverTimestamp(),
-            peringkat: document.getElementById(`peringkat-${type}`).value,
-            program: document.getElementById(`program-${type}`).value,
-            anjuran: document.getElementById(`anjuran-${type}`).value,
-            kategori: document.getElementById(`kategori-${type}`).value,
-            pencapaian: document.getElementById(`capai-${type}`).value
-        };
-
-        if(type === 'sekolah') {
-            entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/...';
-        } else {
-            const gSelect = document.getElementById('guruSelect');
-            entry.guru = gSelect.options[gSelect.selectedIndex].text;
-        }
-
-        // Simpan ke Firestore
-        await addDoc(collection(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru'), entry);
-        
-        alert("Rekod Berjaya Disimpan!");
-        document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
-        if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
-        
-    } catch (e) {
-        alert("Ralat: " + e.message);
-    } finally {
-        btn.innerText = `SIMPAN REKOD ${type.toUpperCase()}`;
-        btn.disabled = false;
-    }
-}
-
-// 4. FUNGSI PAPAR JADUAL (AMBIL DARI FIRESTORE)
-window.renderTables = async function() {
-    const types = [
-        { id: 'table-sekolah-body', col: 'skbt_sekolah', fields: ['tarikh', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] },
-        { id: 'table-guru-body', col: 'skbt_guru', fields: ['tarikh', 'guru', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] }
+    // 3. SENARAI GURU MASTER (KEKAL STRUKTUR ASAL)
+    const MASTER_GURU_LIST = [
+        { name: "ADLIN FAZLINDA BINTI ASNAN", drive: "https://drive.google.com/drive/folders/1u_kumvl2ChnxHPmekUgObtxx2zdqHSTN?usp=sharing" },
+        { name: "DAYANG NORFARAHAIN FAEEZA BINTI HASSIM", drive: "https://drive.google.com/drive/folders/1tuEea9LUIA-zF2XD2oyTcLiQhtR-6VIK?usp=sharing" },
+        { name: "KHAIRULAZMAN BIN DOLLAH", drive: "https://drive.google.com/drive/folders/1Tpr_xlYxBtN6Dk1f2Qqet5EPgpeV3SpM?usp=sharing" },
+        { name: "MAISARATUL SYABRINA IZZATI BINTI MUHAMAD SHUKRI", drive: "https://drive.google.com/drive/folders/1h3YNfdtdZqSfaTX84cV3XwsZvLVnG9Gl?usp=sharing" },
+        { name: "MASTAHIR BIN MD. AMIN", drive: "https://drive.google.com/drive/folders/1H2Jrtr0pc6qoDr1kq5hF0B36Kg5fMgq5?usp=sharing" },
+        { name: "NORMAZIDA BINTI AHMAD", drive: "https://drive.google.com/drive/folders/1tdjXHx3bMNvbaMOTAXC2ehuhyRw3AKDJ?usp=sharing" },
+        { name: "MAZUIN BINTI AHMAD KAMIL", drive: "https://drive.google.com/drive/folders/1FOPSizHpG-pKH_znLCRLExxPiHIGY-hl?usp=sharing" },
+        { name: "MOHD FAEIZ BIN SANUSI", drive: "https://drive.google.com/drive/folders/1dHNGPlD63lFpFWYkFeVCFzc79DSWJ2uU?usp=sharing" },
+        { name: "MOHD FAIZAL BIN AHMAD", drive: "https://drive.google.com/drive/folders/1bzoI2EL2tCxiEI5OhHXYgpx6cjj4fe-J?usp=sharing" },
+        { name: "NOHD HIJRAN BIN AHMAD IDRUS", drive: "https://drive.google.com/drive/folders/1ui3OKAjSdvFbnY22AbtstRn3CaPaPaN7aZ?usp=sharing" },
+        { name: "MOHD NOOR RASHID BIN WAGIMAN", drive: "https://drive.google.com/drive/folders/1Dkurl0f8iTU6RHISQPAxHnV7RxgTls33?usp=sharing" },
+        { name: "MUZAFFAR AHMAD BIN ZAINAL ABIDIN", drive: "https://drive.google.com/drive/folders/1BZUcS4D2zQOfHwly50M1Zi7KZuOvhCjP?usp=sharing" },
+        { name: "NOOR HASLINDA BINTI MOHD NASIRAN", drive: "https://drive.google.com/drive/folders/1NwNEcXKlvG8LEOgYDYkbgi97fnW-LpVL?usp=sharing" },
+        { name: "NORAZLINAWATI BINTI MAHMOOD", drive: "https://drive.google.com/drive/folders/1bA-vpVh6QO2b2qY1FPDvMtZ-gSX6QWFw?usp=sharing" },
+        { name: "NORHIDAYAH BINTI MOHAMAD", drive: "https://drive.google.com/drive/folders/1Si-IaR5HTxZCqOYStLClNhYsxowuyAVL?usp=sharing" },
+        { name: "NORSAADAH BINTI JAILANI", drive: "https://drive.google.com/drive/folders/1T5orYpUtPvzPsxtALMH5zJmyF59C4wJN?usp=sharing" },
+        { name: "NORZAIMAH BINTI ZAKARIA", drive: "https://drive.google.com/drive/folders/1k8e_orxreEMAv1fwakrZKtMf6WVTPG2H?usp=sharing" },
+        { name: "NUR 'AMALIA BINTI HASAN ZAKI", drive: "https://drive.google.com/drive/folders/1VQXZ6BYew8ttGymx_HkT_Mlu8DUigVI2?usp=sharing" },
+        { name: "NURUL NAJIHAH BINTI SAHLAN", drive: "https://drive.google.com/drive/folders/1NkZNWaoXpa9JSbECz_1_uUNXYU75GkZa?usp=sharing" },
+        { name: "PSPA LAILA BINTI OTHMAN", drive: "https://drive.google.com/drive/folders/1J7PNN2mZGiFiFdvGuw5qhGVbK6NqkPT7?usp=sharing" },
+        { name: "RAZIDAH BINTI MOHAMED", drive: "https://drive.google.com/drive/folders/1gt_wXG-iQKBnVhfyLupgPTTmumo10QL3?usp=sharing" },
+        { name: "ROSELINDA BINTI LAZIM", drive: "https://drive.google.com/drive/folders/1RgFQAd8lAWEvmeoLLhQtsA6CKmvK5fXk?usp=sharing" },
+        { name: "RUMINI BINTI TUKIMAN", drive: "https://drive.google.com/drive/folders/1GNBPbCi917rY8l24f8v26iktI9Mb_ljx?usp=sharing" },
+        { name: "SITI NOOR FAKHARIYAH BINTI MD. SHAHID", drive: "https://drive.google.com/drive/folders/16r6OLhCjeoskbxUVoYnuIclsTl0d7_B8?usp=sharing" },
+        { name: "SHAHMINA WARDAH BINTI SUARDI", drive: "https://drive.google.com/drive/folders/1Xw3fYDXccj5MJHpAMeb7RTrCGrWnHiHO?usp=sharing" },
+        { name: "VEETIYAH A/P SUROMUTHU", drive: "https://drive.google.com/drive/folders/1ehX5znqZvyMyjCBRO55MaVSdYaitKaHF?usp=sharing" },
+        { name: "ZULKARNAIN BIN M. AYOB", drive: "https://drive.google.com/drive/folders/1t5Tu4CA-0ivVS6VM_ugU0SUPkoOmytrK?usp=sharing" },
+        { name: "NOR AZAH BINTI MORI", drive: "https://drive.google.com/drive/folders/1mEFlaUTpTYQi9BgonoJ4GB7SrWSePoCa?usp=sharing" }
     ];
 
-    for (const t of types) {
-        const tbody = document.getElementById(t.id);
-        if(!tbody) continue;
-        tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center">Memuatkan...</td></tr>';
+    // 4. FUNGSI ANALISIS (YANG ANDA MINTA)
+    async function renderAnalisis() {
+        const tbody = document.getElementById('analisis-guru-body');
+        if(!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500 italic">Memproses Analisis...</td></tr>';
 
-        const q = query(collection(db, t.col), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        tbody.innerHTML = "";
-        let bil = 1;
+        try {
+            // Ambil semua data rekod individu dari Firestore
+            const snapshot = await getDocs(collection(db, "skbt_guru"));
+            const allRecords = [];
+            snapshot.forEach(doc => allRecords.push(doc.data()));
 
-        snap.forEach(doc => {
-            const d = doc.data();
-            let row = `<tr><td class="p-4 border text-center">${bil++}</td>`;
-            t.fields.forEach(f => row += `<td class="p-4 border">${d[f] || '-'}</td>`);
-            row += `<td class="p-4 border no-print text-center"><button class="text-blue-500">Lihat</button></td></tr>`;
-            tbody.innerHTML += row;
-        });
+            // Update Statistik Statistik Ringkas (Atas)
+            const countByLevel = (level) => allRecords.filter(r => r.peringkat === level).length;
+            document.getElementById('stat-antarabangsa').innerText = countByLevel('ANTARABANGSA');
+            document.getElementById('stat-kebangsaan').innerText = countByLevel('KEBANGSAAN');
+            document.getElementById('stat-negeri').innerText = countByLevel('NEGERI');
+            document.getElementById('stat-daerah').innerText = countByLevel('DAERAH');
+
+            // Bina Jadual Analisis Induk
+            tbody.innerHTML = "";
+            MASTER_GURU_LIST.forEach(guru => {
+                const guruRecords = allRecords.filter(r => r.guru === guru.name);
+                const listPrograms = guruRecords.map(r => `${r.program} (${r.peringkat})`).join(', ') || '-';
+                
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-4 border font-semibold text-gray-700">${guru.name}</td>
+                        <td class="p-4 border text-center font-bold text-blue-600">${guruRecords.length}</td>
+                        <td class="p-4 border text-sm text-gray-600">${listPrograms}</td>
+                        <td class="p-4 border text-center">
+                            <a href="${guru.drive}" target="_blank" class="bg-blue-50 text-blue-600 p-2 rounded-full hover:bg-blue-600 hover:text-white transition inline-flex items-center justify-center w-10 h-10 shadow-sm" title="Buka Google Drive">
+                                <i class="fab fa-google-drive"></i>
+                            </a>
+                        </td>
+                    </tr>`;
+            });
+        } catch (e) {
+            console.error("Analisis Error:", e);
+            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-500">Gagal memuatkan analisis.</td></tr>';
+        }
     }
-}
 
-// 5. FUNGSI UPDATE EVIDEN (KEKAL ASAL)
-window.updateEvidenGuru = function() {
-    const select = document.getElementById('guruSelect');
-    const wrapper = document.getElementById('pautanGuruWrapper');
-    const link = document.getElementById('pautanGuruLink');
-    if (select.value) {
-        link.href = select.options[select.selectedIndex].getAttribute('data-drive');
-        wrapper.classList.remove('hidden');
-    } else {
-        wrapper.classList.add('hidden');
+    // 5. FUNGSI GLOBAL (WAJIB ADA SUPAYA BUTANG BERFUNGSI)
+    window.showTab = function(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('nav button').forEach(el => el.classList.remove('tab-active'));
+        document.getElementById('content-' + tabId).classList.remove('hidden');
+        document.getElementById('tab-' + tabId).classList.add('tab-active');
+        
+        if(tabId.includes('rekod')) renderTables();
+        if(tabId === 'analisis') renderAnalisis();
+    };
+
+    window.saveData = async function(event, type) {
+        event.preventDefault();
+        const btn = event.submitter;
+        btn.disabled = true;
+        btn.innerText = "MENYIMPAN...";
+
+        try {
+            const entry = {
+                tarikh: new Date().toLocaleDateString('ms-MY'),
+                createdAt: serverTimestamp(),
+                peringkat: document.getElementById(`peringkat-${type}`).value,
+                program: document.getElementById(`program-${type}`).value,
+                anjuran: document.getElementById(`anjuran-${type}`).value,
+                kategori: document.getElementById(`kategori-${type}`).value,
+                pencapaian: document.getElementById(`capai-${type}`).value
+            };
+
+            if(type === 'sekolah') {
+                entry.eviden = document.getElementById('eviden-sekolah').value || 'https://drive.google.com/drive/folders/1araUUb_m405qeqwSCmDOTliM5McmKrDd?usp=sharing';
+            } else {
+                const gSelect = document.getElementById('guruSelect');
+                entry.guru = gSelect.options[gSelect.selectedIndex].text;
+            }
+
+            await addDoc(collection(db, type === 'sekolah' ? 'skbt_sekolah' : 'skbt_guru'), entry);
+            alert("Rekod Berjaya Disimpan!");
+            document.getElementById(type === 'sekolah' ? 'formSekolah' : 'formGuru').reset();
+            if(type === 'guru') document.getElementById('pautanGuruWrapper').classList.add('hidden');
+            
+        } catch (e) {
+            alert("Ralat: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = `SIMPAN REKOD ${type.toUpperCase()}`;
+        }
+    };
+
+    async function renderTables() {
+        const types = [
+            { id: 'table-sekolah-body', col: 'skbt_sekolah', fields: ['tarikh', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] },
+            { id: 'table-guru-body', col: 'skbt_guru', fields: ['tarikh', 'guru', 'peringkat', 'program', 'anjuran', 'kategori', 'pencapaian'] }
+        ];
+
+        for (const t of types) {
+            const tbody = document.getElementById(t.id);
+            if(!tbody) continue;
+            tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center">Memuatkan...</td></tr>';
+
+            const q = query(collection(db, t.col), orderBy("createdAt", "desc"));
+            const snap = await getDocs(q);
+            tbody.innerHTML = "";
+            let bil = 1;
+
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                let row = `<tr class="hover:bg-gray-50"><td class="p-4 border text-center">${bil++}</td>`;
+                t.fields.forEach(f => row += `<td class="p-4 border text-sm">${d[f] || '-'}</td>`);
+                row += `<td class="p-4 border no-print text-center"><i class="fas fa-check-circle text-green-500"></i></td></tr>`;
+                tbody.innerHTML += row;
+            });
+        }
     }
-}
 
-// 6. COPY LINK & MODAL (KEKAL ASAL)
-window.copyShareLink = function() {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Pautan Berjaya Disalin!');
-}
+    window.updateEvidenGuru = function() {
+        const select = document.getElementById('guruSelect');
+        const wrapper = document.getElementById('pautanGuruWrapper');
+        const link = document.getElementById('pautanGuruLink');
+        if (select.value) {
+            link.href = select.options[select.selectedIndex].getAttribute('data-drive');
+            wrapper.classList.remove('hidden');
+        } else {
+            wrapper.classList.add('hidden');
+        }
+    };
 
-// Jalankan analisis masa mula
-window.onload = () => { showTab('analisis'); };
+    window.copyShareLink = function() {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Pautan Dashboard Berjaya Disalin!');
+    };
+
+    // Jalankan Analisis Secara Automatik Semasa Mula
+    window.onload = () => { renderAnalisis(); };
 </script>
 </body>
 </html>
