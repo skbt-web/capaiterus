@@ -407,10 +407,10 @@
         }
 
         // Save Data
-        function saveData(event, type) {
+        async function saveData(event, type) {
             event.preventDefault();
             const date = new Date().toLocaleDateString('ms-MY');
-            const id = document.getElementById(`edit-id-${type}`).value || Date.now();
+            const id = document.getElementById(`edit-id-${type}`).value || Date.now().toString();
             
             let entry = { id: id, tarikh: date };
 
@@ -431,7 +431,7 @@
                 entry.kategori = document.getElementById('kategori-guru').value;
                 entry.pencapaian = document.getElementById('capai-guru').value;
             }
-
+         
             const existingIndex = db[type].findIndex(item => item.id == id);
             if (existingIndex > -1) {
                 db[type][existingIndex] = entry;
@@ -621,13 +621,16 @@ async function hantarKeFirestore(type, dataBaru) {
             renderAnalisis();
         };
     </script>
-    <!-- TAMBAH DI BAWAH SEKALI SEBELUM </body> -->
-    <script type="module">
+      <!-- TAMBAH DI BAWAH SEKALI SEBELUM </body> -->
+
+<script type="module">
 // ================= FIREBASE SETUP =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"; // TAMBAH INI
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// 🔥 GANTI CONFIG INI
 const firebaseConfig = {
   apiKey: "AIzaSyBgO8saVfliDuG5VZDueR9FHG64-DwRjEs",
   authDomain: "ecapaiskbt.firebaseapp.com",
@@ -637,75 +640,99 @@ const firebaseConfig = {
   appId: "1:328855405603:web:32c5e193845b237e065d96"
 };
 
+// INIT
 const app = initializeApp(firebaseConfig);
 const dbFirestore = getFirestore(app);
 const auth = getAuth(app);
 
-// Login secara senyap supaya Rules 'if true' berfungsi lancar
-signInAnonymously(auth).catch(err => console.error("Auth Fail:", err));
+    
+// LOGIN (WAJIB untuk rules)
+signInAnonymously(auth);
 
-// Dedahkan ke Global supaya boleh diakses oleh script lain
+// GLOBAL
 window.dbFirestore = dbFirestore;
 window.fb = { collection, addDoc, getDocs, deleteDoc, doc };
 
-// ================= OVERRIDE SAVE FUNCTION =================
+// ================= OVERRIDE FUNCTION ASAL =================
+
+// MODIFY saveData (tanpa ubah logic asal)
 const originalSaveData = window.saveData;
 
 window.saveData = async function(event, type) {
-    // 1. Jalankan fungsi simpan asal (ke LocalStorage)
-    if (typeof originalSaveData === "function") {
-        originalSaveData(event, type);
+    // RUN FUNCTION ASAL
+    originalSaveData(event, type);
+
+    // AMBIL DATA TERAKHIR
+    const lastData = window.db[type][window.db[type].length - 1];
+
+    try {
+        await window.fb.addDoc(
+            window.fb.collection(
+                window.dbFirestore,
+                type === 'sekolah' ? 'rekod_sekolah' : 'rekod_guru'
+            ),
+            lastData
+        );
+        console.log("✅ Data masuk Firestore");
+    } catch (err) {
+        console.error("❌ Error Firestore:", err);
     }
-
-    // 2. Tunggu 300ms untuk pastikan window.db[type] sudah dikemas kini
-    setTimeout(async () => {
-        try {
-            const currentArray = window.db[type];
-            const dataTerakhir = currentArray[currentArray.length - 1];
-
-            if (dataTerakhir) {
-                const namaKoleksi = (type === 'sekolah') ? 'rekod_sekolah' : 'rekod_guru';
-                
-                await addDoc(collection(dbFirestore, namaKoleksi), dataTerakhir);
-                console.log(`✅ [${type}] Berjaya masuk Firestore!`);
-            }
-        } catch (error) {
-            console.error("❌ Gagal simpan ke Firestore:", error);
-        }
-    }, 300); 
 };
 
-// ================= LOAD DATA DARI CLOUD =================
-async function loadFromCloud() {
-    console.log("Menarik data dari Cloud...");
-    const senarai = [
-        { k: 'sekolah', c: 'rekod_sekolah' },
-        { k: 'guru', c: 'rekod_guru' }
+// ================= LOAD DATA =================
+async function loadFirestoreData() {
+    const jenis = [
+        { key: 'sekolah', col: 'rekod_sekolah' },
+        { key: 'guru', col: 'rekod_guru' }
     ];
 
-    for (let item of senarai) {
-        try {
-            const querySnapshot = await getDocs(collection(dbFirestore, item.c));
-            const dataCloud = [];
-            querySnapshot.forEach((doc) => dataCloud.push(doc.data()));
+    for (let j of jenis) {
+        const snapshot = await window.fb.getDocs(
+            window.fb.collection(window.dbFirestore, j.col)
+        );
 
-            if (dataCloud.length > 0) {
-                window.db[item.k] = dataCloud;
-                localStorage.setItem(`skbt_${item.k}`, JSON.stringify(dataCloud));
-            }
-        } catch (err) {
-            console.error(`Gagal load ${item.k}:`, err);
-        }
+        window.db[j.key] = [];
+
+        snapshot.forEach(doc => {
+            window.db[j.key].push(doc.data());
+        });
+        // TAMBAH INI - sync localStorage dengan Firestore
+        localStorage.setItem(`skbt_${j.key}`, JSON.stringify(window.db[j.key]));
     }
-    
-    if (window.renderTables) window.renderTables();
-    if (window.renderAnalisis) window.renderAnalisis();
+
+    window.renderTables();
+    window.renderAnalisis();
 }
 
-// Auto-run bila buka page
-window.addEventListener("load", loadFromCloud);
-
+// ================= AUTO LOAD =================
+window.addEventListener("load", async () => {
+    await loadFirestoreData();
+});
 </script>
+    <div id="security-alert" class="no-print" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; background-color: #ef4444; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid white;">
+        <i class="fas fa-exclamation-triangle mr-2"></i> AMARAN: Akses kod sumber telah disekat!
+    </div>
 
+    <script>
+        function tunjukAmaran() {
+            const alertBox = document.getElementById('security-alert');
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+        }
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            tunjukAmaran();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "F12" || (e.ctrlKey && e.key === "u") || (e.ctrlKey && e.shiftKey && e.key === "I") || (e.ctrlKey && e.key === "s")) {
+                e.preventDefault();
+                tunjukAmaran();
+            }
+        });
+    </script>
+
+      
 </body>
 </html>
