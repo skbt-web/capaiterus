@@ -362,6 +362,27 @@
     </main>
 
    <script type="module">
+    /* --- KOD KESELAMATAN TAMBAHAN (JANGAN USIK) --- */
+    const amaran = "AMARAN: Hak Cipta Terpelihara!";
+    
+    // Halang Klik Kanan
+    document.addEventListener('contextmenu', e => { e.preventDefault(); alert(amaran); });
+    
+    // Halang Shortcut F12, Ctrl+U, Ctrl+Shift+I
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123 || (e.ctrlKey && (e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)))) {
+            alert(amaran);
+            return false;
+        }
+    };
+
+    // Amaran di Console
+    setInterval(function() {
+        console.clear();
+        console.log("%cBERHENTI!", "color: red; font-size: 50px; font-weight: bold;");
+        console.log("%cIni adalah kawasan larangan. Segala aktiviti mencuri kod adalah dilarang.", "font-size: 20px; color: yellow; background-color: black;");
+    }, 1000);
+    /* --- TAMAT KOD KESELAMATAN --- */
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
